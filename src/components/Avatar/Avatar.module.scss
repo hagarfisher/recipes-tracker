@@ -1,0 +1,16 @@
+@import "../../../styles/variables.module.scss";
+
+.avatar-wrapper {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  .upload-input {
+    &:hover {
+      color: $color-1;
+    }
+    background-color: $color-2;
+    label {
+        cursor: pointer;
+    }
+  }
+}
