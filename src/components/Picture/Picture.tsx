@@ -7,14 +7,16 @@ export default function Picture({
   unique_id: uid,
   url,
   size,
-  onUpload,
   collectionName,
+  onUpload,
+  canEdit = false,
 }: {
-  unique_id: string;
+  unique_id?: string;
   url: string;
   size: number;
-  onUpload: (url: string) => void;
   collectionName: CollectionNames;
+  onUpload?: (url: string) => void;
+  canEdit?: boolean;
 }) {
   const supabase = useSupabaseClient<Database>();
   const [pictureUrl, setPictureUrl] = useState<string>();
@@ -62,7 +64,7 @@ export default function Picture({
         throw uploadError;
       }
 
-      onUpload(filePath);
+      onUpload?.(filePath);
     } catch (error) {
       console.error(error);
     } finally {
@@ -79,26 +81,26 @@ export default function Picture({
           style={{ height: size, width: size }}
         />
       ) : (
-        <div
-          style={{ height: size, width: size }}
-        />
+        <div style={{ height: size, width: size }} />
       )}
-      <div className={styles["upload-input"]}>
-        <label className="button primary block" htmlFor="single">
-          {uploading ? "Uploading ..." : "Upload"}
-        </label>
-        <input
-          style={{
-            visibility: "hidden",
-            position: "absolute",
-          }}
-          type="file"
-          id="single"
-          accept="image/*"
-          onChange={uploadPicture}
-          disabled={uploading}
-        />
-      </div>
+      {canEdit && (
+        <div className={styles["upload-input"]}>
+          <label className="button primary block" htmlFor="single">
+            {uploading ? "Uploading ..." : "Upload"}
+          </label>
+          <input
+            style={{
+              visibility: "hidden",
+              position: "absolute",
+            }}
+            type="file"
+            id="single"
+            accept="image/*"
+            onChange={uploadPicture}
+            disabled={uploading}
+          />
+        </div>
+      )}
     </div>
   );
 }

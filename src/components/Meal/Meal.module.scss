@@ -1,10 +1,20 @@
 @import "../../../styles/variables.module.scss";
 
-.meals {
+.meals-wrapper {
   margin-top: 30px;
+  display: flex;
+  gap: 100px;
   a {
     cursor: pointer;
     padding: 30px 30px;
     background-color: $color-1;
   }
+}
+
+.meal {
+    display: flex;
+    gap: 10px;
+    button {
+        cursor: pointer;
+    }
 }

@@ -3,13 +3,12 @@ import {
   useSupabaseClient,
   useUser,
 } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
-import styles from "./Meal.module.scss";
-import { Database, ModelNames } from "../../utils/models";
-import Meal from "./Meal";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Database, ModelNames } from "../../utils/models";
 import { RouteNames, navLinks } from "../../utils/routes";
-import { MealEditMode } from "../../types/meals";
+import Meal from "./Meal";
+import styles from "./Meal.module.scss";
 
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
 
@@ -17,6 +16,10 @@ export default function Meals({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const [loading, setLoading] = useState(true);
   const [mealsData, setMealsData] = useState<Meal[]>([]);
+  const user = useUser();
+  if (!user) {
+    return null;
+  }
 
   const linkToAdminPage = navLinks.find(
     (link) => link.name === RouteNames.ADMIN
@@ -31,7 +34,8 @@ export default function Meals({ session }: { session: Session }) {
       setLoading(true);
       let { data, error, status } = await supabase
         .from(ModelNames.MEALS)
-        .select();
+        .select()
+        .eq("is_deleted", false);
       if (error && status !== 406) {
         throw error;
       }
@@ -46,38 +50,36 @@ export default function Meals({ session }: { session: Session }) {
     }
   }
 
-  // async function updateMeal({
-  //   username,
-  //   avatar_url,
-  // }: {
-  //   username: Profiles["username"];
-  //   avatar_url: Profiles["avatar_url"];
-  // }) {
-  //   try {
-  //     setLoading(true);
-  //     if (!user) throw new Error("No user");
+  async function updateCookingSession(mealId: number) {
+    try {
+      setLoading(true);
+      let { error } = await supabase.from(ModelNames.COOKING_EVENTS).insert({
+        meal_id: mealId,
+        created_by: user!.id,
+      });
+      if (error) {
+        throw error;
+      }
+      console.log("Cooking session created!");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  //     const updates = {
-  //       id: user.id,
-  //       username,
-  //       avatar_url,
-  //       updated_at: new Date().toISOString(),
-  //     };
-
-  //     let { error } = await supabase.from("profiles").upsert(updates);
-  //     if (error) throw error;
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-
-  return (
-    <div className={styles["meals"]}>
-      {mealsData.map((meal) => (
-        <Meal mealData={meal} />
-      ))}
+  return loading ? (
+    <span>"Loading..."</span>
+  ) : (
+    <div className={styles["meals-wrapper"]}>
+      <div className={styles["meal-list"]}>
+        {mealsData.map((meal) => (
+          <Meal
+            mealData={meal}
+            onCookingSessionEnd={() => updateCookingSession(meal.id)}
+          />
+        ))}
+      </div>
       <Link
         href={{
           pathname: linkToAdminPage ?? "",

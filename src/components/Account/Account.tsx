@@ -87,6 +87,7 @@ export default function Account({ session }: { session: Session }) {
             updateProfile({ username, avatar_url: url });
           }}
           collectionName={CollectionNames.AVATARS}
+          canEdit
         />
 
         <div className={styles["form-input"]}>

@@ -22,7 +22,6 @@ export default function MealEditing({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true);
   const [mealData, setMealData] = useState<Partial<Meal>>();
   const user = useUser();
-  console.log(user);
   if (!user) {
     return null;
   }
@@ -59,14 +58,11 @@ export default function MealEditing({ session }: { session: Session }) {
   async function updateOrCreateMeal(mealPayload: Partial<Meal>) {
     try {
       setLoading(true);
-      let { error } = await supabase
-        .from(ModelNames.MEALS)
-        .upsert({
-          ...mealPayload,
-          created_by: user!.id,
-          updated_at: new Date(),
-        })
-        .single();
+      let { error } = await supabase.from(ModelNames.MEALS).upsert({
+        ...mealPayload,
+        created_by: user!.id,
+        updated_at: new Date(),
+      });
       if (error) throw error;
       const { data } = await supabase
         .from(ModelNames.MEALS)
@@ -87,12 +83,14 @@ export default function MealEditing({ session }: { session: Session }) {
   async function deleteMeal(mealId: number) {
     try {
       setLoading(true);
-      let { error } = await supabase.from(ModelNames.MEALS).update({
-        id: mealId,
-        is_deleted: true,
-        created_by: user!.id,
-        updated_at: new Date(),
-      });
+      let { error } = await supabase
+        .from(ModelNames.MEALS)
+        .update({
+          is_deleted: true,
+          created_by: user!.id,
+          updated_at: new Date(),
+        })
+        .eq("id", mealId);
       if (error) throw error;
       console.log("Meal deleted!");
     } catch (error) {
@@ -147,9 +145,10 @@ export default function MealEditing({ session }: { session: Session }) {
             size={150}
             onUpload={(url: string) => {
               updateMeal("image_url", url);
-              updateOrCreateMeal({ image_url: url });
+              updateOrCreateMeal({ ...mealData, image_url: url });
             }}
             collectionName={CollectionNames.MEAL_IMAGES}
+            canEdit
           />
         )}
       </div>
