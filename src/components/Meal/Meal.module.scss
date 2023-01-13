@@ -1,0 +1,10 @@
+@import "../../../styles/variables.module.scss";
+
+.meals {
+  margin-top: 30px;
+  a {
+    cursor: pointer;
+    padding: 30px 30px;
+    background-color: $color-1;
+  }
+}

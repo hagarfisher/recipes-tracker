@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import styles from "./Avatar.module.scss";
+import styles from "./Picture.module.scss";
+import { CollectionNames, Database } from "../../utils/models";
 
-type Database = any;
-type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
-
-export default function Avatar({
-  uid,
+export default function Picture({
+  unique_id: uid,
   url,
   size,
   onUpload,
-  className,
+  collectionName,
 }: {
-  uid: string;
-  url: Profiles["avatar_url"];
+  unique_id: string;
+  url: string;
   size: number;
   onUpload: (url: string) => void;
-  className?: string;
+  collectionName: CollectionNames;
 }) {
   const supabase = useSupabaseClient<Database>();
-  const [avatarUrl, setAvatarUrl] = useState<Profiles["avatar_url"]>(null);
+  const [pictureUrl, setPictureUrl] = useState<string>();
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
@@ -29,19 +27,19 @@ export default function Avatar({
   async function downloadImage(path: string) {
     try {
       const { data, error } = await supabase.storage
-        .from("avatars")
+        .from(collectionName)
         .download(path);
       if (error) {
         throw error;
       }
       const url = URL.createObjectURL(data);
-      setAvatarUrl(url);
+      setPictureUrl(url);
     } catch (error) {
       console.log("Error downloading image: ", error);
     }
   }
 
-  const uploadAvatar: React.ChangeEventHandler<HTMLInputElement> = async (
+  const uploadPicture: React.ChangeEventHandler<HTMLInputElement> = async (
     event
   ) => {
     try {
@@ -57,7 +55,7 @@ export default function Avatar({
       const filePath = `${fileName}`;
 
       let { error: uploadError } = await supabase.storage
-        .from("avatars")
+        .from(collectionName)
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
@@ -66,7 +64,6 @@ export default function Avatar({
 
       onUpload(filePath);
     } catch (error) {
-      alert("Error uploading avatar!");
       console.error(error);
     } finally {
       setUploading(false);
@@ -74,21 +71,19 @@ export default function Avatar({
   };
 
   return (
-    <div className={styles['avatar-wrapper']}>
-      {avatarUrl ? (
+    <div className={styles["picture-wrapper"]}>
+      {pictureUrl ? (
         <img
-          src={avatarUrl}
-          alt="Avatar"
-          className="avatar image"
+          src={pictureUrl}
+          alt="Picture"
           style={{ height: size, width: size }}
         />
       ) : (
         <div
-          className="avatar no-image"
           style={{ height: size, width: size }}
         />
       )}
-      <div className={styles['upload-input']}>
+      <div className={styles["upload-input"]}>
         <label className="button primary block" htmlFor="single">
           {uploading ? "Uploading ..." : "Upload"}
         </label>
@@ -100,7 +95,7 @@ export default function Avatar({
           type="file"
           id="single"
           accept="image/*"
-          onChange={uploadAvatar}
+          onChange={uploadPicture}
           disabled={uploading}
         />
       </div>

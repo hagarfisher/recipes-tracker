@@ -4,18 +4,18 @@ import {
   useSupabaseClient,
   Session,
 } from "@supabase/auth-helpers-react";
-import Avatar from "../Avatar/Avatar";
+import Picture from "../Picture/Picture";
 import styles from "./Account.module.scss";
+import { CollectionNames, Database, ModelNames } from "../../utils/models";
 
-type Database = any;
-type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 export default function Account({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState<Profiles["username"]>(null);
-  const [avatar_url, setAvatarUrl] = useState<Profiles["avatar_url"]>(null);
+  const [username, setUsername] = useState<Profile["username"]>(null);
+  const [avatar_url, setAvatarUrl] = useState<Profile["avatar_url"]>(null);
 
   useEffect(() => {
     getProfile();
@@ -27,7 +27,7 @@ export default function Account({ session }: { session: Session }) {
       if (!user) throw new Error("No user");
 
       let { data, error, status } = await supabase
-        .from("profiles")
+        .from(ModelNames.PROFILES)
         .select(`username, avatar_url`)
         .eq("id", user.id)
         .single();
@@ -41,8 +41,7 @@ export default function Account({ session }: { session: Session }) {
         setAvatarUrl(data.avatar_url);
       }
     } catch (error) {
-      alert("Error loading user data!");
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -52,8 +51,8 @@ export default function Account({ session }: { session: Session }) {
     username,
     avatar_url,
   }: {
-    username: Profiles["username"];
-    avatar_url: Profiles["avatar_url"];
+    username: Profile["username"];
+    avatar_url: Profile["avatar_url"];
   }) {
     try {
       setLoading(true);
@@ -66,12 +65,11 @@ export default function Account({ session }: { session: Session }) {
         updated_at: new Date().toISOString(),
       };
 
-      let { error } = await supabase.from("profiles").upsert(updates);
+      let { error } = await supabase.from(ModelNames.PROFILES).upsert(updates);
       if (error) throw error;
-      alert("Profile updated!");
+      console.log("Profile updated!");
     } catch (error) {
-      alert("Error updating the data!");
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -80,14 +78,15 @@ export default function Account({ session }: { session: Session }) {
   return (
     user && (
       <div className={styles["form-widget"]}>
-        <Avatar
-          uid={user.id}
-          url={avatar_url}
+        <Picture
+          unique_id={user.id}
+          url={avatar_url ?? ''}
           size={150}
           onUpload={(url: string) => {
             setAvatarUrl(url);
             updateProfile({ username, avatar_url: url });
           }}
+          collectionName={CollectionNames.AVATARS}
         />
 
         <div className={styles["form-input"]}>

@@ -12,7 +12,7 @@ export default function Header() {
       <nav>
         {navLinks.map((link, index) => {
           return (
-            <ul>
+            <ul key={link.path}>
               <Link href={link.path}>
                 <li key={index}>{link.name}</li>
               </Link>

@@ -1,8 +1,12 @@
+import { useSession } from "@supabase/auth-helpers-react";
+import MealEditing from "../src/components/MealEditing/MealEditing";
 
 const Admin = () => {
-  return (
+  const session = useSession();
+
+  return session && (
     <div className="container">
-      <div>im an admin</div>
+      <MealEditing session={session} />
     </div>
   );
 };
