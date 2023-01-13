@@ -1,7 +1,7 @@
 import { useSession } from "@supabase/auth-helpers-react";
 import Account from "../src/components/Account/Account";
 
-const Home = () => {
+const Profile = () => {
   const session = useSession();
 
   return (
@@ -13,4 +13,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;
