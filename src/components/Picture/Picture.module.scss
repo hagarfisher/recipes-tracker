@@ -6,9 +6,9 @@
   align-content: center;
   .upload-input {
     &:hover {
-      color: $color-1;
+      color: $primaryDarkColor;
     }
-    background-color: $color-2;
+    background-color: $primaryLightColor;
     label {
         cursor: pointer;
     }

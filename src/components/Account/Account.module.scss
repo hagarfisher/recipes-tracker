@@ -4,16 +4,16 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  background-color: $color-4;
+  background-color: $mainBackground;
   margin: 5% 20%;
   .form-input {
     display: grid;
     justify-content: center;
     align-content: center;
     label {
-        width: 30%;
-        min-width: 100px;
-        display: inline-block;
+      width: 30%;
+      min-width: 100px;
+      display: inline-block;
     }
   }
   img {

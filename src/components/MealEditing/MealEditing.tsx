@@ -10,6 +10,10 @@ import { CollectionNames, Database, ModelNames } from "../../utils/models";
 import styles from "./MealEditing.module.scss";
 import Picture from "../Picture/Picture";
 
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
 
 export default function MealEditing({ session }: { session: Session }) {
@@ -22,13 +26,20 @@ export default function MealEditing({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true);
   const [mealData, setMealData] = useState<Partial<Meal>>();
   const user = useUser();
-  if (!user) {
-    return null;
-  }
 
   useEffect(() => {
     getMeal();
   }, [session]);
+
+  useEffect(() => {
+    if (mealData) {
+      updateOrCreateMeal(mealData);
+    }
+  }, [mealData]);
+
+  if (!user) {
+    return null;
+  }
 
   async function getMeal() {
     try {
@@ -69,9 +80,9 @@ export default function MealEditing({ session }: { session: Session }) {
         .select()
         .eq("name", mealPayload.name)
         .single();
-      if (data) {
-        setMealData(data);
-      }
+      // if (data) {
+      //   setMealData(data);
+      // }
       console.log("Meal updated!");
     } catch (error) {
       console.error(error);
@@ -109,70 +120,100 @@ export default function MealEditing({ session }: { session: Session }) {
   }
 
   return (
-    <div className={styles["form-meal-edit"]}>
-      <div className={styles["form-input"]}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            type="text"
-            value={mealData?.name ?? ""}
-            onChange={(e) => updateMeal("name", e.target.value)}
-          />
+    <>
+      {/* <div className={styles["form-meal-edit"]}>
+        <div className={styles["form-input"]}>
+          <div>
+            <label htmlFor="name">Name</label>
+            <input
+              id="name"
+              type="text"
+              value={mealData?.name ?? ""}
+              onChange={(e) => updateMeal("name", e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="description">Description</label>
+            <input
+              id="description"
+              type="text"
+              value={mealData?.description ?? ""}
+              onChange={(e) => updateMeal("description", e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="recipe_url">Recipe URL</label>
+            <input
+              id="recipe_url"
+              type="text"
+              value={mealData?.recipe_url ?? ""}
+              onChange={(e) => updateMeal("recipe_url", e.target.value)}
+            />
+          </div>
+          {mealData?.id && (
+            <Picture
+              unique_id={mealData.id.toString()}
+              url={mealData?.image_url ?? ""}
+              size={150}
+              onUpload={(url: string) => {
+                updateMeal("image_url", url);
+                updateOrCreateMeal({ ...mealData, image_url: url });
+              }}
+              collectionName={CollectionNames.MEAL_IMAGES}
+              canEdit
+            />
+          )}
         </div>
-        <div>
-          <label htmlFor="description">Description</label>
-          <input
-            id="description"
-            type="text"
-            value={mealData?.description ?? ""}
-            onChange={(e) => updateMeal("description", e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="recipe_url">Recipe URL</label>
-          <input
-            id="recipe_url"
-            type="text"
-            value={mealData?.recipe_url ?? ""}
-            onChange={(e) => updateMeal("recipe_url", e.target.value)}
-          />
-        </div>
-        {mealData?.id && (
-          <Picture
-            unique_id={mealData.id.toString()}
-            url={mealData?.image_url ?? ""}
-            size={150}
-            onUpload={(url: string) => {
-              updateMeal("image_url", url);
-              updateOrCreateMeal({ ...mealData, image_url: url });
-            }}
-            collectionName={CollectionNames.MEAL_IMAGES}
-            canEdit
-          />
-        )}
-      </div>
 
-      <div className={styles["form-input"]}>
-        <button
-          className="button primary block"
-          onClick={() => mealData && updateOrCreateMeal(mealData)}
-          disabled={loading}
-        >
-          {loading ? "Loading ..." : mealData?.id ? "Update" : "Create"}
-        </button>
-      </div>
-
-      {mealData?.id && (
         <div className={styles["form-input"]}>
           <button
-            className="button block"
-            onClick={() => deleteMeal(mealData.id!)}
+            className="button primary block"
+            onClick={() => mealData && updateOrCreateMeal(mealData)}
+            disabled={loading}
           >
-            Delete
+            {loading ? "Loading ..." : mealData?.id ? "Update" : "Create"}
           </button>
         </div>
-      )}
-    </div>
+
+        {mealData?.id && (
+          <div className={styles["form-input"]}>
+            <button
+              className="button block"
+              onClick={() => deleteMeal(mealData.id!)}
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </div> */}
+      <div className={styles["form-meal-edit"]}>
+        <TextField
+          label="Meal title"
+          variant="standard"
+          id="name"
+          value={mealData?.name ?? ""}
+          onChange={(e) => updateMeal("name", e.target.value)}
+        />
+        <TextField
+          label="Recipe URL"
+          variant="standard"
+          id="recipe_url"
+          value={mealData?.recipe_url ?? ""}
+          onChange={(e) => updateMeal("recipe_url", e.target.value)}
+        />
+        <TextField
+          label="Description"
+          multiline
+          maxRows={4}
+          variant="standard"
+          id="description"
+          value={mealData?.description ?? ""}
+          onChange={(e) => updateMeal("description", e.target.value)}
+        />
+        <Button color="primary" variant="contained">
+          {loading ? "Loading ..." : mealData?.id ? "Update" : "Create"}
+        </Button>
+      </div>
+    </>
   );
 }

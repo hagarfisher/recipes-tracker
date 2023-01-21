@@ -8,7 +8,10 @@ import { useEffect, useState } from "react";
 import { Database, ModelNames } from "../../utils/models";
 import { RouteNames, navLinks } from "../../utils/routes";
 import Meal from "./Meal";
+
 import styles from "./Meal.module.scss";
+import Button from "@mui/material/Button";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
 
@@ -17,9 +20,6 @@ export default function Meals({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true);
   const [mealsData, setMealsData] = useState<Meal[]>([]);
   const user = useUser();
-  if (!user) {
-    return null;
-  }
 
   const linkToAdminPage = navLinks.find(
     (link) => link.name === RouteNames.ADMIN
@@ -27,7 +27,12 @@ export default function Meals({ session }: { session: Session }) {
 
   useEffect(() => {
     getMeals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
+
+  if (!user) {
+    return null;
+  }
 
   async function getMeals() {
     try {
@@ -69,24 +74,32 @@ export default function Meals({ session }: { session: Session }) {
   }
 
   return loading ? (
-    <span>"Loading..."</span>
+    <span>Loading...</span>
   ) : (
-    <div className={styles["meals-wrapper"]}>
-      <div className={styles["meal-list"]}>
+    <div>
+      <div className={styles["meals-wrapper"]}>
+        <Button
+          className={styles["new-meal-btn"]}
+          color="secondary"
+          variant="contained"
+        >
+          <Link
+            href={{
+              pathname: linkToAdminPage ?? "",
+            }}
+          >
+            Add new meal
+          </Link>
+          <AddRoundedIcon />
+        </Button>
         {mealsData.map((meal) => (
           <Meal
+            key={meal.id}
             mealData={meal}
             onCookingSessionEnd={() => updateCookingSession(meal.id)}
           />
         ))}
       </div>
-      <Link
-        href={{
-          pathname: linkToAdminPage ?? "",
-        }}
-      >
-        Add new meal recipe
-      </Link>
     </div>
   );
 }

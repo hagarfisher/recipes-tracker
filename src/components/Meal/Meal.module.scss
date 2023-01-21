@@ -1,20 +1,19 @@
 @import "../../../styles/variables.module.scss";
 
 .meals-wrapper {
-  margin-top: 30px;
-  display: flex;
-  gap: 100px;
-  a {
-    cursor: pointer;
-    padding: 30px 30px;
-    background-color: $color-1;
-  }
-}
+  padding-top: 2vh;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-rows:
+    min-content 1fr min-content
+    100px 1fr max-content;
+  column-gap: 2vw;
+  row-gap: 2vh;
+  background-color: $mainBackground;
 
-.meal {
-    display: flex;
-    gap: 10px;
-    button {
-        cursor: pointer;
-    }
+  .new-meal-btn {
+    // grid-area: sidebar;
+  }
 }

@@ -1,7 +1,12 @@
+@import "../../../styles/variables.module.scss";
+
 .form-meal-edit {
+  background-color: $mainBackground;
   display: flex;
-  justify-content: space-around;
-  button {
-    cursor: pointer;
-  }
+  flex-direction: column;
+  gap: 2vh;
+  padding-left: 20%;
+  padding-right: 20%;
+  height: 91.907vh;
+  justify-content: center;
 }

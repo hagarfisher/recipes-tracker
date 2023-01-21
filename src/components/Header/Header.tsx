@@ -3,23 +3,40 @@ import { navLinks } from "../../utils/routes";
 import Link from "next/link";
 import styles from "./Header.module.scss";
 
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+
 export default function Header() {
   return (
-    <header className={styles.header}>
-      <div className={styles.brand}>
-        <h3>Recipes Tracker</h3>
-      </div>
-      <nav>
-        {navLinks.map((link, index) => {
-          return (
-            <ul key={link.path}>
-              <Link href={link.path}>
-                <li key={index}>{link.name}</li>
-              </Link>
-            </ul>
-          );
-        })}
-      </nav>
-    </header>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Recipes Tracker
+          </Typography>
+          {navLinks.map((link, index) => {
+            return (
+              <Button color="inherit" key={link.path}>
+                <Link href={link.path}>{link.name}</Link>
+              </Button>
+            );
+          })}
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
