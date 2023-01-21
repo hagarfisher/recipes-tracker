@@ -1,13 +1,11 @@
-$color-1: #040f0f;
-$color-2: #0e3013;
-$color-3: #656665;
-$color-4: #289944;
-$color-5: #e8e8e9;
+$primaryDarkColor: #2c3639;
+$primaryLightColor: #3f4e4f;
+$secondaryColor: #a27b5c;
+$mainBackground: #dcd7c9;
 
 :export {
-    veryDarkCyan: $color-1;
-    darkGreen: $color-2;
-    gray: $color-3;
-    lightGreen: $color-4;
-    lightGray: $color-5;
-  }
+  primaryDarkColor: $primaryDarkColor;
+  primaryLightColor: $primaryLightColor;
+  secondaryColor: $secondaryColor;
+  mainBackground: $mainBackground;
+}
