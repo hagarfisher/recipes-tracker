@@ -5,15 +5,9 @@ export enum RouteNames {
 }
 
 export const navLinks = [
-    { name: RouteNames.HOME, 
-     path: "/" 
-    },
-    {
-      name: RouteNames.ADMIN,
-      path: "/admin",
-    },
-    {
-      name: RouteNames.PROFILE,
-      path: "/profile",
-    }
-  ];
+  { name: RouteNames.HOME, path: "/" },
+  {
+    name: RouteNames.ADMIN,
+    path: "/admin",
+  },
+];
