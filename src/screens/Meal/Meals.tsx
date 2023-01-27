@@ -7,8 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Database, ModelNames } from "../../utils/models";
 import { RouteNames, navLinks } from "../../utils/routes";
-import Meal from "./Meal";
-
+import RecipeCard from "../../components/RecipeCard/RecipeCard";
 import styles from "./Meal.module.scss";
 import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -93,10 +92,11 @@ export default function Meals({ session }: { session: Session }) {
         <AddRoundedIcon />
       </Button>
       {mealsData.map((meal) => (
-        <Meal
+        <RecipeCard
           key={meal.id}
           mealData={meal}
           onCookingSessionEnd={() => updateCookingSession(meal.id)}
+          linkToAdminPage={linkToAdminPage}
         />
       ))}
     </div>

@@ -10,7 +10,8 @@ import { useEffect, useState } from "react";
 import { MealEditMode } from "../../types/meals";
 import { CollectionNames, Database, ModelNames } from "../../utils/models";
 import styles from "./MealEditing.module.scss";
-import Picture from "../Picture/Picture";
+import Picture from "../../components/Picture/Picture";
+import RecipeCard from "../../components/RecipeCard/RecipeCard";
 
 import Box from "@mui/material/Box";
 import MaterialLink from "@mui/material/Link";
@@ -36,12 +37,8 @@ export default function MealEditing({ session }: { session: Session }) {
     mode?: MealEditMode;
   };
   const [loading, setLoading] = useState(true);
-  const [mealData, setMealData] = useState<Partial<Meal>>();
+  const [mealData, setMealData] = useState<Partial<Meal>>({ name: "my title" });
 
-  const { imageUrl, isLoading, error } = useResolveImageUrl(
-    CollectionNames.MEAL_IMAGES,
-    mealData?.image_url ?? defaultImagePath
-  );
   const user = useUser();
 
   useEffect(() => {
@@ -194,7 +191,7 @@ export default function MealEditing({ session }: { session: Session }) {
         )}
       </div>
       <div className={styles["card-preview"]}>
-        <Card className={styles.card}>
+        {/* <Card className={styles.card}>
           {!loading && (
             <CardMedia sx={{ height: 140 }} image={imageUrl} title="name" />
           )}
@@ -220,7 +217,12 @@ export default function MealEditing({ session }: { session: Session }) {
             <Button size="small">i cooked this!</Button>
             <Button>Edit Meal</Button>
           </CardActions>
-        </Card>
+        </Card> */}
+        <RecipeCard
+          mealData={mealData}
+          onCookingSessionEnd={undefined}
+          linkToAdminPage={undefined}
+        />
       </div>
     </div>
   );
