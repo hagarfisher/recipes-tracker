@@ -3,6 +3,8 @@ import {
   useSupabaseClient,
   useUser,
 } from "@supabase/auth-helpers-react";
+import { v4 as uuidv4 } from "uuid";
+
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { MealEditMode } from "../../types/meals";
@@ -11,8 +13,18 @@ import styles from "./MealEditing.module.scss";
 import Picture from "../Picture/Picture";
 
 import Box from "@mui/material/Box";
+import MaterialLink from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
+import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
+import { defaultImagePath } from "../../utils/constants";
 
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
 
@@ -25,21 +37,26 @@ export default function MealEditing({ session }: { session: Session }) {
   };
   const [loading, setLoading] = useState(true);
   const [mealData, setMealData] = useState<Partial<Meal>>();
+
+  const { imageUrl, isLoading, error } = useResolveImageUrl(
+    CollectionNames.MEAL_IMAGES,
+    mealData?.image_url ?? defaultImagePath
+  );
   const user = useUser();
 
   useEffect(() => {
     getMeal();
   }, [session]);
 
-  useEffect(() => {
-    if (mealData) {
-      updateOrCreateMeal(mealData);
-    }
-  }, [mealData]);
+  // useEffect(() => {
+  //   if (mealData) {
+  //     updateOrCreateMeal(mealData);
+  //   }
+  // }, [mealData]);
 
-  if (!user) {
-    return null;
-  }
+  // if (!user) {
+  //   return null;
+  // }
 
   async function getMeal() {
     try {
@@ -120,72 +137,7 @@ export default function MealEditing({ session }: { session: Session }) {
   }
 
   return (
-    <>
-      {/* <div className={styles["form-meal-edit"]}>
-        <div className={styles["form-input"]}>
-          <div>
-            <label htmlFor="name">Name</label>
-            <input
-              id="name"
-              type="text"
-              value={mealData?.name ?? ""}
-              onChange={(e) => updateMeal("name", e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              type="text"
-              value={mealData?.description ?? ""}
-              onChange={(e) => updateMeal("description", e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="recipe_url">Recipe URL</label>
-            <input
-              id="recipe_url"
-              type="text"
-              value={mealData?.recipe_url ?? ""}
-              onChange={(e) => updateMeal("recipe_url", e.target.value)}
-            />
-          </div>
-          {mealData?.id && (
-            <Picture
-              unique_id={mealData.id.toString()}
-              url={mealData?.image_url ?? ""}
-              size={150}
-              onUpload={(url: string) => {
-                updateMeal("image_url", url);
-                updateOrCreateMeal({ ...mealData, image_url: url });
-              }}
-              collectionName={CollectionNames.MEAL_IMAGES}
-              canEdit
-            />
-          )}
-        </div>
-
-        <div className={styles["form-input"]}>
-          <button
-            className="button primary block"
-            onClick={() => mealData && updateOrCreateMeal(mealData)}
-            disabled={loading}
-          >
-            {loading ? "Loading ..." : mealData?.id ? "Update" : "Create"}
-          </button>
-        </div>
-
-        {mealData?.id && (
-          <div className={styles["form-input"]}>
-            <button
-              className="button block"
-              onClick={() => deleteMeal(mealData.id!)}
-            >
-              Delete
-            </button>
-          </div>
-        )}
-      </div> */}
+    <div className={styles["container"]}>
       <div className={styles["form-meal-edit"]}>
         <TextField
           label="Meal title"
@@ -210,10 +162,66 @@ export default function MealEditing({ session }: { session: Session }) {
           value={mealData?.description ?? ""}
           onChange={(e) => updateMeal("description", e.target.value)}
         />
-        <Button color="primary" variant="contained">
+
+        <Picture
+          unique_id={uuidv4()}
+          url={mealData?.image_url ?? ""}
+          size={150}
+          onUpload={(url: string) => {
+            updateMeal("image_url", url);
+            // updateOrCreateMeal({ ...mealData, image_url: url });
+          }}
+          collectionName={CollectionNames.MEAL_IMAGES}
+          canEdit
+        />
+
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => mealData && updateOrCreateMeal(mealData)}
+          disabled={loading}
+        >
           {loading ? "Loading ..." : mealData?.id ? "Update" : "Create"}
         </Button>
+        {mealData?.id && (
+          <Button
+            color="warning"
+            variant="outlined"
+            onClick={() => deleteMeal(mealData.id!)}
+          >
+            Delete
+          </Button>
+        )}
       </div>
-    </>
+      <div className={styles["card-preview"]}>
+        <Card className={styles.card}>
+          {!loading && (
+            <CardMedia sx={{ height: 140 }} image={imageUrl} title="name" />
+          )}
+
+          <CardContent>
+            <Typography
+              className={styles["card-title"]}
+              gutterBottom
+              variant="h6"
+              textTransform={"capitalize"}
+              component="div"
+            >
+              {mealData?.name ?? "Title"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {mealData?.description ?? "Description..."}
+            </Typography>
+            <MaterialLink target={"_blank"} href={mealData?.recipe_url ?? ""}>
+              Recipe
+            </MaterialLink>
+          </CardContent>
+          <CardActions>
+            <Button size="small">i cooked this!</Button>
+            <Button>Edit Meal</Button>
+          </CardActions>
+        </Card>
+      </div>
+    </div>
   );
 }

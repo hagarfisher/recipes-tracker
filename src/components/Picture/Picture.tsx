@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import styles from "./Picture.module.scss";
 import { CollectionNames, Database } from "../../utils/models";
+import { Input } from "@mui/material";
 
 export default function Picture({
   unique_id: uid,
@@ -84,22 +85,13 @@ export default function Picture({
         <div style={{ height: size, width: size }} />
       )}
       {canEdit && (
-        <div className={styles["upload-input"]}>
-          <label className="button primary block" htmlFor="single">
-            {uploading ? "Uploading ..." : "Upload"}
-          </label>
-          <input
-            style={{
-              visibility: "hidden",
-              position: "absolute",
-            }}
-            type="file"
-            id="single"
-            accept="image/*"
-            onChange={uploadPicture}
-            disabled={uploading}
-          />
-        </div>
+        <Input
+          type="file"
+          id="single"
+          onChange={uploadPicture}
+          disabled={uploading}
+          inputProps={{ accept: "image/*" }}
+        />
       )}
     </div>
   );

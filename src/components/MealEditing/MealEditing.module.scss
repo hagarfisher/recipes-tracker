@@ -1,12 +1,37 @@
 @import "../../../styles/variables.module.scss";
 
-.form-meal-edit {
+.container {
   background-color: $mainBackground;
   display: flex;
+  justify-content: space-around;
+  // gap: 1rem;
+  align-items: center;
+  height: 98vh;
+}
+
+.card-preview {
+}
+
+.card {
+  max-width: 38vw;
+}
+
+.form-meal-edit {
+  display: flex;
   flex-direction: column;
-  gap: 2vh;
-  padding-left: 20%;
-  padding-right: 20%;
-  height: 91.907vh;
-  justify-content: center;
+  width: 50%;
+  gap: 1rem;
+}
+.card-title {
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+
+  &:hover {
+    width: auto;
+    overflow: visible;
+    white-space: normal;
+  }
 }
