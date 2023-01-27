@@ -12,6 +12,7 @@ import Meal from "./Meal";
 import styles from "./Meal.module.scss";
 import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { CircularProgress } from "@mui/material";
 
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
 
@@ -74,32 +75,30 @@ export default function Meals({ session }: { session: Session }) {
   }
 
   return loading ? (
-    <span>Loading...</span>
+    <CircularProgress />
   ) : (
-    <div>
-      <div className={styles["meals-wrapper"]}>
-        <Button
-          className={styles["new-meal-btn"]}
-          color="secondary"
-          variant="contained"
+    <div className={styles["meals-wrapper"]}>
+      <Button
+        className={styles["new-meal-btn"]}
+        color="secondary"
+        variant="contained"
+      >
+        <Link
+          href={{
+            pathname: linkToAdminPage ?? "",
+          }}
         >
-          <Link
-            href={{
-              pathname: linkToAdminPage ?? "",
-            }}
-          >
-            Add new meal
-          </Link>
-          <AddRoundedIcon />
-        </Button>
-        {mealsData.map((meal) => (
-          <Meal
-            key={meal.id}
-            mealData={meal}
-            onCookingSessionEnd={() => updateCookingSession(meal.id)}
-          />
-        ))}
-      </div>
+          Add new meal
+        </Link>
+        <AddRoundedIcon />
+      </Button>
+      {mealsData.map((meal) => (
+        <Meal
+          key={meal.id}
+          mealData={meal}
+          onCookingSessionEnd={() => updateCookingSession(meal.id)}
+        />
+      ))}
     </div>
   );
 }

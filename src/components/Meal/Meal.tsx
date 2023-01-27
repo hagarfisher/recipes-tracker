@@ -1,19 +1,17 @@
 import Link from "next/link";
+import { MouseEventHandler } from "react";
 import { CollectionNames, Database, ModelNames } from "../../utils/models";
 import { navLinks, RouteNames } from "../../utils/routes";
 import styles from "./Meal.module.scss";
-import { MouseEventHandler, useEffect } from "react";
-import Picture from "../Picture/Picture";
 
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import MaterialLink from "@mui/material/Link";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
+import MaterialLink from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { defaultImagePath } from "../../utils/constants";
 
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
@@ -35,17 +33,18 @@ export default function Meal({
   );
   // TODO: somehow deal with tags, display them etc.
   return (
-    <Card sx={{ width: "90%", justifySelf: "center" }}>
+    <Card className={styles.card}>
       {!isLoading && !error && (
         <CardMedia sx={{ height: 140 }} image={imageUrl} title="name" />
       )}
 
-      <CardContent>
+      <CardContent className={styles["card-content"]}>
         <Typography
           gutterBottom
           variant="h5"
           textTransform={"capitalize"}
           component="div"
+          sx={{ "overflow-wrap": "break-word" }}
         >
           {mealData.name}
         </Typography>
