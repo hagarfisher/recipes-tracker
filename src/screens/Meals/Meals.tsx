@@ -12,13 +12,14 @@ import styles from "./Meals.module.scss";
 import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
-
-type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
+import { MealEnrichedWithCookingEvents } from "../../types/meals";
 
 export default function Meals({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const [loading, setLoading] = useState(true);
-  const [mealsData, setMealsData] = useState<Meal[]>([]);
+  const [mealsData, setMealsData] = useState<MealEnrichedWithCookingEvents[]>(
+    []
+  );
   const user = useUser();
 
   const linkToAdminPage = navLinks.find(
@@ -39,7 +40,7 @@ export default function Meals({ session }: { session: Session }) {
       setLoading(true);
       let { data, error, status } = await supabase
         .from(ModelNames.MEALS)
-        .select()
+        .select(`*, ${ModelNames.COOKING_EVENTS} (id, created_at)`)
         .eq("is_deleted", false);
       if (error && status !== 406) {
         throw error;
@@ -57,7 +58,6 @@ export default function Meals({ session }: { session: Session }) {
 
   async function updateCookingSession(mealId: number) {
     try {
-      setLoading(true);
       let { error } = await supabase.from(ModelNames.COOKING_EVENTS).insert({
         meal_id: mealId,
         created_by: user!.id,
@@ -65,11 +65,10 @@ export default function Meals({ session }: { session: Session }) {
       if (error) {
         throw error;
       }
+      await getMeals();
       console.log("Cooking session created!");
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -97,6 +96,7 @@ export default function Meals({ session }: { session: Session }) {
           mealData={meal}
           onCookingSessionEnd={() => updateCookingSession(meal.id)}
           linkToAdminPage={linkToAdminPage}
+          withActions
         />
       ))}
     </div>

@@ -3,29 +3,19 @@ import {
   useSupabaseClient,
   useUser,
 } from "@supabase/auth-helpers-react";
+import Router from "next/router";
 import { v4 as uuidv4 } from "uuid";
 
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Picture from "../../components/Picture/Picture";
+import RecipeCard from "../../components/RecipeCard/RecipeCard";
 import { MealEditMode } from "../../types/meals";
 import { CollectionNames, Database, ModelNames } from "../../utils/models";
 import styles from "./MealEditing.module.scss";
-import Picture from "../../components/Picture/Picture";
-import RecipeCard from "../../components/RecipeCard/RecipeCard";
 
-import Box from "@mui/material/Box";
-import MaterialLink from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Typography,
-} from "@mui/material";
-import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
-import { defaultImagePath } from "../../utils/constants";
 
 type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
 
@@ -44,16 +34,6 @@ export default function MealEditing({ session }: { session: Session }) {
   useEffect(() => {
     getMeal();
   }, [session]);
-
-  // useEffect(() => {
-  //   if (mealData) {
-  //     updateOrCreateMeal(mealData);
-  //   }
-  // }, [mealData]);
-
-  // if (!user) {
-  //   return null;
-  // }
 
   async function getMeal() {
     try {
@@ -89,15 +69,8 @@ export default function MealEditing({ session }: { session: Session }) {
         updated_at: new Date(),
       });
       if (error) throw error;
-      const { data } = await supabase
-        .from(ModelNames.MEALS)
-        .select()
-        .eq("name", mealPayload.name)
-        .single();
-      // if (data) {
-      //   setMealData(data);
-      // }
       console.log("Meal updated!");
+      Router.push("/");
     } catch (error) {
       console.error(error);
     } finally {
@@ -118,6 +91,7 @@ export default function MealEditing({ session }: { session: Session }) {
         .eq("id", mealId);
       if (error) throw error;
       console.log("Meal deleted!");
+      Router.push("/");
     } catch (error) {
       console.error(error);
     } finally {
@@ -126,7 +100,6 @@ export default function MealEditing({ session }: { session: Session }) {
   }
 
   function updateMeal(key: keyof Meal, valueToChange: Meal[keyof Meal]) {
-    console.log({ [key]: valueToChange });
     setMealData((prevMealData) => ({
       ...(prevMealData ?? {}),
       [key]: valueToChange,
@@ -191,33 +164,6 @@ export default function MealEditing({ session }: { session: Session }) {
         )}
       </div>
       <div className={styles["card-preview"]}>
-        {/* <Card className={styles.card}>
-          {!loading && (
-            <CardMedia sx={{ height: 140 }} image={imageUrl} title="name" />
-          )}
-
-          <CardContent>
-            <Typography
-              className={styles["card-title"]}
-              gutterBottom
-              variant="h6"
-              textTransform={"capitalize"}
-              component="div"
-            >
-              {mealData?.name ?? "Title"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {mealData?.description ?? "Description..."}
-            </Typography>
-            <MaterialLink target={"_blank"} href={mealData?.recipe_url ?? ""}>
-              Recipe
-            </MaterialLink>
-          </CardContent>
-          <CardActions>
-            <Button size="small">i cooked this!</Button>
-            <Button>Edit Meal</Button>
-          </CardActions>
-        </Card> */}
         <RecipeCard
           mealData={mealData}
           onCookingSessionEnd={undefined}
