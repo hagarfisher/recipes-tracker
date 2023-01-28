@@ -23,7 +23,7 @@ export default function RecipeCard({
   onCookingSessionEnd,
   linkToAdminPage,
 }: {
-  mealData: MealType;
+  mealData: Partial<MealType>;
   onCookingSessionEnd?: MouseEventHandler<HTMLButtonElement>;
   linkToAdminPage?: string;
 }) {
