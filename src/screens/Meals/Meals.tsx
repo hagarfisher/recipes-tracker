@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Database, ModelNames } from "../../utils/models";
 import { RouteNames, navLinks } from "../../utils/routes";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
-import styles from "./Meal.module.scss";
+import styles from "./Meals.module.scss";
 import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
