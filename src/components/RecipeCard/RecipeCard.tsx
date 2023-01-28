@@ -13,6 +13,7 @@ import {
   CardContent,
   CardMedia,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import MaterialLink from "@mui/material/Link";
 import Link from "next/link";
@@ -42,15 +43,17 @@ export default function RecipeCard({
       )}
 
       <CardContent className={styles["card-content"]}>
-        <Typography
-          gutterBottom
-          variant="h5"
-          textTransform={"capitalize"}
-          component="div"
-          sx={{ "overflow-wrap": "break-word" }}
-        >
-          {mealData.name}
-        </Typography>
+        <Tooltip title={mealData.name} placement="top-start">
+          <Typography
+            gutterBottom
+            variant="h5"
+            textTransform={"capitalize"}
+            component="div"
+            className={styles["card-title"]}
+          >
+            {mealData.name}
+          </Typography>
+        </Tooltip>
         <Typography variant="body2" color="text.secondary">
           {mealData.description}
         </Typography>

@@ -1,13 +1,18 @@
+@import "./styles/variables.module.scss";
+
 :root {
   font-family: "Roboto", sans-serif;
 }
 
 * {
-  box-sizing: border-box;
+  // box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
+body {
+  // background-color: $mainBackground;
+}
 a {
   color: inherit;
   text-decoration: none;

@@ -4,34 +4,38 @@
   background-color: $mainBackground;
   display: flex;
   justify-content: space-around;
-  // gap: 1rem;
+  flex-wrap: wrap;
+  gap: 2vh;
   align-items: center;
-  height: 98vh;
+  padding-top: 3vh;
+  padding-bottom: 10%;
+  // height: 98vh;
 }
 
 .card-preview {
 }
 
 .card {
-  max-width: 38vw;
+  // flex: 45%;
+  max-width: 33%;
 }
 
 .form-meal-edit {
   display: flex;
   flex-direction: column;
-  width: 50%;
-  gap: 1rem;
+  flex-grow: 0.5;
+  gap: 0.5rem;
 }
-.card-title {
-  overflow-wrap: anywhere;
-  text-overflow: ellipsis;
-  word-wrap: break-word;
-  white-space: nowrap;
-  overflow: hidden;
+// .card-title {
+//   overflow-wrap: anywhere;
+//   text-overflow: ellipsis;
+//   word-wrap: break-word;
+//   white-space: nowrap;
+//   overflow: hidden;
 
-  &:hover {
-    width: auto;
-    overflow: visible;
-    white-space: normal;
-  }
-}
+//   &:hover {
+//     width: auto;
+//     overflow: visible;
+//     white-space: normal;
+//   }
+// }
