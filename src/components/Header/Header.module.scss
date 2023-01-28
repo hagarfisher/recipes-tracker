@@ -1,19 +1,19 @@
-@import '../../../styles/variables.module.scss';
+@import "../../../styles/variables.module.scss";
 
 .header {
+  display: flex;
+  width: 100vw;
+  justify-content: space-between;
+  padding: 20px 5%;
+  background-color: $primaryDarkColor;
+  nav {
     display: flex;
-    width: 100vw;
-    justify-content: space-between;
-    padding: 20px 5%;
-    background-color: $primaryDarkColor;
-    nav {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-        li {
-            list-style-type: none;
-            color: $mainBackground;
-            font-weight: 500;
-        }
+    flex-direction: row;
+    gap: 20px;
+    li {
+      list-style-type: none;
+      color: $mainBackground;
+      font-weight: 500;
     }
+  }
 }
