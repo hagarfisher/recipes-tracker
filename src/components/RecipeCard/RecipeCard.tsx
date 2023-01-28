@@ -4,7 +4,10 @@ import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
 import { defaultImagePath } from "../../utils/constants";
 import { CollectionNames } from "../../utils/models";
 
-import { Meal as MealType } from "../../types/meals";
+import {
+  Meal as MealType,
+  MealEnrichedWithCookingEvents,
+} from "../../types/meals";
 import styles from "./RecipeCard.module.scss";
 import {
   Button,
@@ -14,32 +17,75 @@ import {
   CardMedia,
   Typography,
   Tooltip,
+  IconButton,
 } from "@mui/material";
 import MaterialLink from "@mui/material/Link";
 import Link from "next/link";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
+import CookieIcon from "@mui/icons-material/Cookie";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import { isWithinLastDay } from "../../utils/date";
+
+interface Props {
+  mealData: Partial<MealEnrichedWithCookingEvents>;
+  onCookingSessionEnd?: MouseEventHandler<HTMLLabelElement>;
+  linkToAdminPage?: string;
+  withActions?: boolean;
+}
 
 export default function RecipeCard({
   mealData,
   onCookingSessionEnd,
   linkToAdminPage,
-}: {
-  mealData: Partial<MealType>;
-  onCookingSessionEnd?: MouseEventHandler<HTMLButtonElement>;
-  linkToAdminPage?: string;
-}) {
-  //   const linkToAdminPage = navLinks.find(
-  //     (link) => link.name === RouteNames.ADMIN
-  //   )?.path;
-
+  withActions,
+}: Props) {
   const { imageUrl, isLoading, error } = useResolveImageUrl(
     CollectionNames.MEAL_IMAGES,
     mealData?.image_url ?? defaultImagePath
   );
   // TODO: somehow deal with tags, display them etc.
+  console.log(mealData.cooking_events);
+  const hasThisRecipeBeenCookedToday = mealData.cooking_events?.find(
+    (cookingEvent) => isWithinLastDay(new Date(cookingEvent.created_at))
+  );
   return (
     <Card className={styles.card}>
       {!isLoading && !error && (
-        <CardMedia sx={{ height: 140 }} image={imageUrl} title="name" />
+        <>
+          {withActions && (
+            <div className={styles["action-icons"]}>
+              <IconButton color="primary" aria-label="edit" component="label">
+                <Link
+                  href={{
+                    pathname: linkToAdminPage ?? "",
+                    query: { id: mealData.id },
+                  }}
+                >
+                  <ModeEditOutlinedIcon />
+                </Link>
+              </IconButton>
+              <IconButton
+                color="primary"
+                aria-label="i-cooked-this"
+                component="label"
+                onClick={
+                  hasThisRecipeBeenCookedToday ? undefined : onCookingSessionEnd
+                }
+              >
+                {hasThisRecipeBeenCookedToday ? (
+                  <CheckCircleOutlinedIcon />
+                ) : (
+                  <CookieIcon />
+                )}
+              </IconButton>
+            </div>
+          )}
+          <CardMedia
+            sx={{ height: 140 }}
+            image={imageUrl}
+            title="recipe-thumbnail"
+          />
+        </>
       )}
 
       <CardContent className={styles["card-content"]}>
@@ -61,21 +107,6 @@ export default function RecipeCard({
           Recipe
         </MaterialLink>
       </CardContent>
-      <CardActions>
-        <Button onClick={onCookingSessionEnd} size="small">
-          i cooked this!
-        </Button>
-        <Button>
-          <Link
-            href={{
-              pathname: linkToAdminPage ?? "",
-              query: { id: mealData.id },
-            }}
-          >
-            Edit meal
-          </Link>
-        </Button>
-      </CardActions>
     </Card>
   );
 }

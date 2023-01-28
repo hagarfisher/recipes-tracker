@@ -1,17 +1,35 @@
+@import "../../../styles/variables.module.scss";
+
 .card {
   display: flex;
   flex-direction: column;
 
+  .card-title {
+    max-width: 30vw;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .card-content {
     flex: 1;
   }
-}
-.card-title {
-  max-width: 30vw;
-  word-break: break-all;
-  overflow-wrap: break-word;
-  text-overflow: ellipsis;
-  word-wrap: break-word;
-  white-space: nowrap;
-  overflow: hidden;
+
+  .action-icons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: $primaryLightColor;
+    svg {
+      filter: invert(93%) sepia(14%) saturate(172%) hue-rotate(6deg)
+        brightness(90%) contrast(96%);
+      &:hover {
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(220deg)
+          brightness(101%) contrast(101%);
+      }
+    }
+  }
 }
