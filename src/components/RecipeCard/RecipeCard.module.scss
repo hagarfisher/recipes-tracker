@@ -3,6 +3,7 @@
 .card {
   display: flex;
   flex-direction: column;
+  min-height: 35vh;
 
   .card-title {
     max-width: 30vw;
