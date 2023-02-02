@@ -25,6 +25,7 @@ import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import CookieIcon from "@mui/icons-material/Cookie";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import { isWithinLastDay } from "../../utils/date";
+import EditDialog from "./EditDialog";
 
 interface Props {
   mealData: Partial<MealEnrichedWithCookingEvents>;
@@ -54,7 +55,7 @@ export default function RecipeCard({
         <>
           {withActions && (
             <div className={styles["action-icons"]}>
-              <IconButton color="primary" aria-label="edit" component="label">
+              {/* <IconButton color="primary" aria-label="edit" component="label">
                 <Link
                   href={{
                     pathname: linkToAdminPage ?? "",
@@ -63,7 +64,8 @@ export default function RecipeCard({
                 >
                   <ModeEditOutlinedIcon />
                 </Link>
-              </IconButton>
+              </IconButton> */}
+              <EditDialog mealData={mealData} withActions={false} />
               <IconButton
                 color="primary"
                 aria-label="i-cooked-this"
