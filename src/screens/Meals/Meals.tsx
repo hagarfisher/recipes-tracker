@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
 import { MealEnrichedWithCookingEvents } from "../../types/meals";
+import EditDialog from "../../components/EditDialog/EditDialog";
 
 export default function Meals({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
@@ -20,6 +21,17 @@ export default function Meals({ session }: { session: Session }) {
   const [mealsData, setMealsData] = useState<MealEnrichedWithCookingEvents[]>(
     []
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentMealDataIndex, setCurrentMealDataIndex] = useState(0);
+
+  const handleRecipeEdit = (mealDataIndex: number) => {
+    setCurrentMealDataIndex(mealDataIndex);
+    toggleDialogOpen();
+  };
+  const toggleDialogOpen = () => {
+    setIsDialogOpen((prevState) => !prevState);
+  };
+
   const user = useUser();
 
   const linkToAdminPage = navLinks.find(
@@ -79,26 +91,33 @@ export default function Meals({ session }: { session: Session }) {
       <Button
         className={styles["new-meal-btn"]}
         color="secondary"
+        onClick={() => handleRecipeEdit(0)}
         variant="contained"
       >
-        <Link
+        {/* <Link
           href={{
             pathname: linkToAdminPage ?? "",
           }}
-        >
-          Add new meal
-        </Link>
+        > */}
+        Add new meal
+        {/* </Link> */}
         <AddRoundedIcon />
       </Button>
-      {mealsData.map((meal) => (
+      {mealsData.map((meal, index) => (
         <RecipeCard
           key={meal.id}
           mealData={meal}
           onCookingSessionEnd={() => updateCookingSession(meal.id)}
           linkToAdminPage={linkToAdminPage}
           withActions
+          handleOpenDialog={() => handleRecipeEdit(index)}
         />
       ))}
+      <EditDialog
+        isOpen={isDialogOpen}
+        handleClose={toggleDialogOpen}
+        mealData={mealsData[currentMealDataIndex]}
+      />
     </div>
   );
 }

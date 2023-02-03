@@ -25,20 +25,24 @@ import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import CookieIcon from "@mui/icons-material/Cookie";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import { isWithinLastDay } from "../../utils/date";
-import EditDialog from "./EditDialog";
+import EditDialog from "../EditDialog/EditDialog";
 
 interface Props {
   mealData: Partial<MealEnrichedWithCookingEvents>;
+  handleOpenDialog?: () => void;
   onCookingSessionEnd?: MouseEventHandler<HTMLLabelElement>;
   linkToAdminPage?: string;
   withActions?: boolean;
+  isEditMode?: boolean;
 }
 
 export default function RecipeCard({
   mealData,
+  handleOpenDialog,
   onCookingSessionEnd,
   linkToAdminPage,
   withActions,
+  isEditMode,
 }: Props) {
   const { imageUrl, isLoading, error } = useResolveImageUrl(
     CollectionNames.MEAL_IMAGES,
@@ -55,17 +59,14 @@ export default function RecipeCard({
         <>
           {withActions && (
             <div className={styles["action-icons"]}>
-              {/* <IconButton color="primary" aria-label="edit" component="label">
-                <Link
-                  href={{
-                    pathname: linkToAdminPage ?? "",
-                    query: { id: mealData.id },
-                  }}
-                >
-                  <ModeEditOutlinedIcon />
-                </Link>
-              </IconButton> */}
-              <EditDialog mealData={mealData} withActions={false} />
+              <IconButton
+                color="primary"
+                aria-label="edit"
+                component="label"
+                onClick={handleOpenDialog}
+              >
+                <ModeEditOutlinedIcon />
+              </IconButton>
               <IconButton
                 color="primary"
                 aria-label="i-cooked-this"
@@ -91,17 +92,25 @@ export default function RecipeCard({
       )}
 
       <CardContent className={styles["card-content"]}>
-        <Tooltip title={mealData.name} placement="top-start">
-          <Typography
-            gutterBottom
-            variant="h5"
-            textTransform={"capitalize"}
-            component="div"
-            className={styles["card-title"]}
-          >
-            {mealData.name}
-          </Typography>
-        </Tooltip>
+        <div style={{ display: "flex", gap: "0.5em", alignItems: "baseline" }}>
+          <Tooltip title={mealData.name} placement="top-start">
+            <Typography
+              gutterBottom
+              variant="h5"
+              textTransform={"capitalize"}
+              component="div"
+              className={styles["card-title"]}
+            >
+              {mealData.name}
+            </Typography>
+          </Tooltip>
+          {isEditMode && (
+            <IconButton>
+              <ModeEditOutlinedIcon fontSize="small" />
+            </IconButton>
+          )}
+        </div>
+
         <Typography variant="body2" color="text.secondary">
           {mealData.description}
         </Typography>

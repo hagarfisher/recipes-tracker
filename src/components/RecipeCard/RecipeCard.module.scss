@@ -3,10 +3,10 @@
 .card {
   display: flex;
   flex-direction: column;
-  min-height: 35vh;
+  min-height: 20vh;
 
   .card-title {
-    max-width: 30vw;
+    width: 20vw;
     word-break: break-all;
     overflow-wrap: break-word;
     text-overflow: ellipsis;
@@ -15,6 +15,11 @@
     overflow: hidden;
   }
 
+  @media only screen and (max-width: 800px) {
+    .card-title {
+      width: 100%;
+    }
+  }
   .card-content {
     flex: 1;
   }
@@ -33,4 +38,9 @@
       }
     }
   }
+  // @media screen and (min-width: 1024px) {
+  //   .card {
+  //     max-width: 20vw
+  //   }
+  // }
 }

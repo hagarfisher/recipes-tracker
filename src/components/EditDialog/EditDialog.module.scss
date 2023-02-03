@@ -1,0 +1,38 @@
+.dialog-wrapper {
+  & :global {
+    .MuiDialogContent-root {
+      display: flex;
+    }
+
+    @media only screen and (max-width: 420px) {
+      .MuiDialog-paper {
+        width: 86vw;
+      }
+    }
+    @media only screen and (min-width: 420px) {
+      .MuiDialog-paper {
+        width: 43vw;
+        height: 48vh;
+      }
+    }
+
+    @media only screen and (min-width: 800px) {
+      .MuiDialog-paper {
+        width: 28vw;
+        min-width: 400px;
+      }
+    }
+
+    @media only screen and (min-width: 1200px) {
+      .MuiDialog-paper {
+        width: 20vw;
+        height: 90vh;
+      }
+    }
+    @media only screen and (min-height: 720px) {
+      .MuiDialog-paper {
+        height: 60vh;
+      }
+    }
+  }
+}
