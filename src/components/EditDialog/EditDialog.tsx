@@ -30,10 +30,10 @@ export default function EditDialog({ mealData, isOpen, handleClose }: Props) {
         <DialogContentText></DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>{"I'm done"}</Button>
         <Button onClick={handleClose} autoFocus>
           Cancel
         </Button>
+        <Button onClick={handleClose}>{"I'm done"}</Button>
       </DialogActions>
     </Dialog>
   );
