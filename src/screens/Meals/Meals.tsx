@@ -117,6 +117,12 @@ export default function Meals({ session }: { session: Session }) {
         isOpen={isDialogOpen}
         handleClose={toggleDialogOpen}
         mealData={mealsData[currentMealDataIndex]}
+        syncMealData={(updatedMealData) => {
+          setMealsData((prevState) => {
+            prevState[currentMealDataIndex] = updatedMealData;
+            return prevState;
+          });
+        }}
       />
     </div>
   );

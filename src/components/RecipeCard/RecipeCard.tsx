@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MouseEventHandler } from "react";
 import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
 import { defaultImagePath } from "../../utils/constants";
-import { CollectionNames } from "../../utils/models";
+import { CollectionNames, Database, ModelNames } from "../../utils/models";
+import { v4 as uuidv4 } from "uuid";
 
 import {
+  Meal,
   Meal as MealType,
   MealEnrichedWithCookingEvents,
 } from "../../types/meals";
@@ -18,6 +20,7 @@ import {
   Typography,
   Tooltip,
   IconButton,
+  TextField,
 } from "@mui/material";
 import MaterialLink from "@mui/material/Link";
 import Link from "next/link";
@@ -26,6 +29,9 @@ import CookieIcon from "@mui/icons-material/Cookie";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import { isWithinLastDay } from "../../utils/date";
 import EditDialog from "../EditDialog/EditDialog";
+import { Router } from "express";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import Picture from "../Picture/Picture";
 
 interface Props {
   mealData: Partial<MealEnrichedWithCookingEvents>;
@@ -34,6 +40,10 @@ interface Props {
   linkToAdminPage?: string;
   withActions?: boolean;
   isEditMode?: boolean;
+  setDescription?: (value: string) => void;
+  setTitle?: (value: string) => void;
+  setRecipeUrl?: (value: string) => void;
+  setMealImageUrl?: (value: string) => void;
 }
 
 export default function RecipeCard({
@@ -43,13 +53,20 @@ export default function RecipeCard({
   linkToAdminPage,
   withActions,
   isEditMode,
+  setDescription,
+  setTitle,
+  setRecipeUrl,
+  setMealImageUrl,
 }: Props) {
+  const supabase = useSupabaseClient<Database>();
+  const user = useUser();
+
   const { imageUrl, isLoading, error } = useResolveImageUrl(
     CollectionNames.MEAL_IMAGES,
-    mealData?.image_url ?? defaultImagePath
+    mealData.image_url ?? defaultImagePath
   );
+
   // TODO: somehow deal with tags, display them etc.
-  console.log(mealData.cooking_events);
   const hasThisRecipeBeenCookedToday = mealData.cooking_events?.find(
     (cookingEvent) => isWithinLastDay(new Date(cookingEvent.created_at))
   );
@@ -83,16 +100,42 @@ export default function RecipeCard({
               </IconButton>
             </div>
           )}
-          <CardMedia
-            sx={{ height: 140 }}
-            image={imageUrl}
-            title="recipe-thumbnail"
-          />
+          <div className={styles["edit-overlay"]}>
+            <CardMedia
+              className={styles["card-media"]}
+              sx={{ height: 140 }}
+              image={imageUrl}
+              title="recipe-thumbnail"
+            />
+            {isEditMode && (
+              <div className={styles["edit-icon"]}>
+                <Picture
+                  unique_id={uuidv4()}
+                  url={mealData?.image_url ?? ""}
+                  size={150}
+                  onUpload={(url: string) => {
+                    if (setMealImageUrl) {
+                      setMealImageUrl(url);
+                    }
+                  }}
+                  collectionName={CollectionNames.MEAL_IMAGES}
+                  canEdit={true}
+                />
+              </div>
+            )}
+          </div>
         </>
       )}
 
       <CardContent className={styles["card-content"]}>
-        <div style={{ display: "flex", gap: "0.5em", alignItems: "baseline" }}>
+        {isEditMode ? (
+          <TextField
+            variant="standard"
+            value={mealData.name}
+            onChange={(event) => setTitle?.(event.target.value)}
+            placeholder="Recipe title.."
+          />
+        ) : (
           <Tooltip title={mealData.name} placement="top-start">
             <Typography
               gutterBottom
@@ -104,19 +147,34 @@ export default function RecipeCard({
               {mealData.name}
             </Typography>
           </Tooltip>
-          {isEditMode && (
-            <IconButton>
-              <ModeEditOutlinedIcon fontSize="small" />
-            </IconButton>
-          )}
-        </div>
+        )}
 
-        <Typography variant="body2" color="text.secondary">
-          {mealData.description}
-        </Typography>
-        <MaterialLink target={"_blank"} href={mealData.recipe_url ?? ""}>
-          Recipe
-        </MaterialLink>
+        {isEditMode ? (
+          <TextField
+            placeholder="Description.."
+            variant="standard"
+            value={mealData.description}
+            multiline
+            maxRows={5}
+            onChange={(event) => setDescription?.(event.target.value)}
+          />
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            {mealData.description}
+          </Typography>
+        )}
+        {isEditMode ? (
+          <TextField
+            variant="standard"
+            value={mealData.recipe_url}
+            onChange={(event) => setRecipeUrl?.(event.target.value)}
+            placeholder="https://recipes-tracker.strafer.dev/"
+          />
+        ) : (
+          <MaterialLink target={"_blank"} href={mealData.recipe_url ?? ""}>
+            Recipe
+          </MaterialLink>
+        )}
       </CardContent>
     </Card>
   );
