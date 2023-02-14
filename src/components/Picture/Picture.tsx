@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import styles from "./Picture.module.scss";
 import { CollectionNames, Database } from "../../utils/models";
-import { Input } from "@mui/material";
+import { IconButton, Input } from "@mui/material";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 
 export default function Picture({
   unique_id: uid,
@@ -75,7 +76,7 @@ export default function Picture({
 
   return (
     <div className={styles["picture-wrapper"]}>
-      {pictureUrl ? (
+      {/* {pictureUrl ? (
         <img
           src={pictureUrl}
           alt="Picture"
@@ -83,15 +84,22 @@ export default function Picture({
         />
       ) : (
         <div style={{ height: size, width: size }} />
-      )}
+      )} */}
       {canEdit && (
-        <Input
-          type="file"
-          id="single"
-          onChange={uploadPicture}
-          disabled={uploading}
-          inputProps={{ accept: "image/*" }}
-        />
+        <div>
+          <label className={styles.label} for="uplaod-image">
+            <ModeEditOutlinedIcon color="primary" />
+          </label>
+
+          <input
+            hidden
+            type="file"
+            id="uplaod-image"
+            onChange={uploadPicture}
+            disabled={uploading}
+            accept="image/*"
+          />
+        </div>
       )}
     </div>
   );

@@ -1,16 +1,27 @@
 @import "../../../styles/variables.module.scss";
 
 .picture-wrapper {
-  display: grid;
-  justify-content: center;
-  align-content: center;
-  .upload-input {
-    &:hover {
-      color: $primaryDarkColor;
-    }
-    background-color: $primaryLightColor;
-    label {
-        cursor: pointer;
-    }
+  // display: grid;
+  // justify-content: center;
+  // align-content: center;
+  // .upload-input {
+  //   &:hover {
+  //     color: $primaryDarkColor;
+  //   }
+  //   background-color: $primaryLightColor;
+  //   label {
+  //       cursor: pointer;
+  //   }
+  // }
+  .label {
+    display: flex;
+    width: 1.5em;
+    border-radius: 35%;
+    background-color: rgba(251, 251, 251, 0.2);
+  }
+  .label:hover {
+    transition: 0.3s;
+    cursor: pointer;
+    background-color: rgba(251, 251, 251, 0.7);
   }
 }
