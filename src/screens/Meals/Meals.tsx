@@ -22,10 +22,16 @@ export default function Meals({ session }: { session: Session }) {
     []
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentMealDataIndex, setCurrentMealDataIndex] = useState(0);
+  const [currentMealData, setCurrentMealData] = useState<
+    Partial<MealEnrichedWithCookingEvents>
+  >({ name: "my title" });
 
   const handleRecipeEdit = (mealDataIndex: number) => {
-    setCurrentMealDataIndex(mealDataIndex);
+    let mealData = { name: "my title" };
+    if (mealDataIndex >= 0) {
+      mealData = mealsData[mealDataIndex];
+    }
+    setCurrentMealData(mealData);
     toggleDialogOpen();
   };
   const toggleDialogOpen = () => {
@@ -117,7 +123,7 @@ export default function Meals({ session }: { session: Session }) {
         <EditableRecipeCard
           isOpen={isDialogOpen}
           handleClose={toggleDialogOpen}
-          mealData={mealsData[currentMealDataIndex]}
+          mealData={currentMealData}
           syncMealData={(updatedMealData) => {
             setMealsData((prevState) => {
               prevState[currentMealDataIndex] = updatedMealData;

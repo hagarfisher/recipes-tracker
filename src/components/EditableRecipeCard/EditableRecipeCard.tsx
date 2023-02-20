@@ -10,7 +10,7 @@ import {
   Meal as MealType,
   MealEnrichedWithCookingEvents,
 } from "../../types/meals";
-import styles from "../RecipeCard/RecipeCard.module.scss";
+import styles from "./EditableRecipeCard.module.scss";
 import {
   Button,
   Card,
@@ -51,12 +51,6 @@ export default function EditableRecipeCard({
 
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
-
-  useEffect(() => {
-    return () => {
-      console.log("unmount");
-    };
-  }, []);
 
   const { imageUrl, isLoading, error } = useResolveImageUrl(
     CollectionNames.MEAL_IMAGES,
