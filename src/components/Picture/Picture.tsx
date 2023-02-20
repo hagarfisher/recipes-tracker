@@ -87,7 +87,7 @@ export default function Picture({
       )} */}
       {canEdit && (
         <div>
-          <label className={styles.label} for="uplaod-image">
+          <label className={styles.label} htmlFor="uplaod-image">
             <ModeEditOutlinedIcon color="primary" />
           </label>
 
