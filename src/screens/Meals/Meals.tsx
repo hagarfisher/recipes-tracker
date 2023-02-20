@@ -14,7 +14,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
 import { MealEnrichedWithCookingEvents } from "../../types/meals";
 import EditDialog from "../../components/EditDialog/EditDialog";
-
+import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
 export default function Meals({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const [loading, setLoading] = useState(true);
@@ -113,17 +113,19 @@ export default function Meals({ session }: { session: Session }) {
           handleOpenDialog={() => handleRecipeEdit(index)}
         />
       ))}
-      <EditDialog
-        isOpen={isDialogOpen}
-        handleClose={toggleDialogOpen}
-        mealData={mealsData[currentMealDataIndex]}
-        syncMealData={(updatedMealData) => {
-          setMealsData((prevState) => {
-            prevState[currentMealDataIndex] = updatedMealData;
-            return prevState;
-          });
-        }}
-      />
+      {isDialogOpen && (
+        <EditableRecipeCard
+          isOpen={isDialogOpen}
+          handleClose={toggleDialogOpen}
+          mealData={mealsData[currentMealDataIndex]}
+          syncMealData={(updatedMealData) => {
+            setMealsData((prevState) => {
+              prevState[currentMealDataIndex] = updatedMealData;
+              return prevState;
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
