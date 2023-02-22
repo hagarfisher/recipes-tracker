@@ -62,7 +62,7 @@ export default function EditableRecipeCard({
         .from(ModelNames.MEALS)
         .upsert({
           ...{
-            id: mealData.id,
+            id: mealData?.id,
             name: title,
             description: description,
             recipe_url: recipeUrl,

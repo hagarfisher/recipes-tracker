@@ -4,6 +4,7 @@ import {
   useUser,
 } from "@supabase/auth-helpers-react";
 import Link from "next/link";
+
 import { useEffect, useState } from "react";
 import { Database, ModelNames } from "../../utils/models";
 import { RouteNames, navLinks } from "../../utils/routes";
@@ -12,7 +13,7 @@ import styles from "./Meals.module.scss";
 import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
-import { MealEnrichedWithCookingEvents } from "../../types/meals";
+import { MealEnrichedWithCookingEvents, Meal } from "../../types/meals";
 import EditDialog from "../../components/EditDialog/EditDialog";
 import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
 export default function Meals({ session }: { session: Session }) {
@@ -22,16 +23,14 @@ export default function Meals({ session }: { session: Session }) {
     []
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentMealData, setCurrentMealData] = useState<
-    Partial<MealEnrichedWithCookingEvents>
-  >({ name: "my title" });
+  const [currentMealDataIndex, setCurrentMealDataIndex] = useState(0);
 
   const handleRecipeEdit = (mealDataIndex: number) => {
-    let mealData = { name: "my title" };
+    let newMealData = { name: "my title" };
     if (mealDataIndex >= 0) {
-      mealData = mealsData[mealDataIndex];
+      newMealData = mealsData[mealDataIndex];
     }
-    setCurrentMealData(mealData);
+    setCurrentMealDataIndex(mealDataIndex);
     toggleDialogOpen();
   };
   const toggleDialogOpen = () => {
@@ -97,7 +96,7 @@ export default function Meals({ session }: { session: Session }) {
       <Button
         className={styles["new-meal-btn"]}
         color="secondary"
-        onClick={() => handleRecipeEdit(0)}
+        onClick={() => handleRecipeEdit(-1)}
         variant="contained"
       >
         {/* <Link
@@ -123,9 +122,16 @@ export default function Meals({ session }: { session: Session }) {
         <EditableRecipeCard
           isOpen={isDialogOpen}
           handleClose={toggleDialogOpen}
-          mealData={currentMealData}
+          mealData={
+            currentMealDataIndex >= 0
+              ? mealsData[currentMealDataIndex]
+              : undefined
+          }
           syncMealData={(updatedMealData) => {
             setMealsData((prevState) => {
+              if (currentMealDataIndex < 0) {
+                return [...prevState, updatedMealData];
+              }
               prevState[currentMealDataIndex] = updatedMealData;
               return prevState;
             });
