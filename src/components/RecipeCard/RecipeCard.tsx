@@ -27,9 +27,8 @@ import Link from "next/link";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import CookieIcon from "@mui/icons-material/Cookie";
 import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { isWithinLastDay } from "../../utils/date";
-import EditDialog from "../EditDialog/EditDialog";
-import { Router } from "express";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import Picture from "../Picture/Picture";
 
@@ -38,12 +37,12 @@ interface Props {
   handleOpenDialog?: () => void;
   onCookingSessionEnd?: MouseEventHandler<HTMLLabelElement>;
   linkToAdminPage?: string;
-  withActions?: boolean;
   isEditMode?: boolean;
   setDescription?: (value: string) => void;
   setTitle?: (value: string) => void;
   setRecipeUrl?: (value: string) => void;
   setMealImageUrl?: (value: string) => void;
+  handleDeleteMeal: () => void;
 }
 
 export default function RecipeCard({
@@ -51,12 +50,12 @@ export default function RecipeCard({
   handleOpenDialog,
   onCookingSessionEnd,
   linkToAdminPage,
-  withActions,
   isEditMode,
   setDescription,
   setTitle,
   setRecipeUrl,
   setMealImageUrl,
+  handleDeleteMeal,
 }: Props) {
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
@@ -70,36 +69,45 @@ export default function RecipeCard({
   const hasThisRecipeBeenCookedToday = mealData.cooking_events?.find(
     (cookingEvent) => isWithinLastDay(new Date(cookingEvent.created_at))
   );
+
   return (
     <Card className={styles.card}>
       {!isLoading && !error && (
         <>
-          {withActions && (
-            <div className={styles["action-icons"]}>
-              <IconButton
-                color="primary"
-                aria-label="edit"
-                component="label"
-                onClick={handleOpenDialog}
-              >
-                <ModeEditOutlinedIcon />
-              </IconButton>
-              <IconButton
-                color="primary"
-                aria-label="i-cooked-this"
-                component="label"
-                onClick={
-                  hasThisRecipeBeenCookedToday ? undefined : onCookingSessionEnd
-                }
-              >
-                {hasThisRecipeBeenCookedToday ? (
-                  <CheckCircleOutlinedIcon />
-                ) : (
-                  <CookieIcon />
-                )}
-              </IconButton>
-            </div>
-          )}
+          <div className={styles["action-icons"]}>
+            <IconButton
+              color="primary"
+              aria-label="edit"
+              component="label"
+              onClick={handleOpenDialog}
+            >
+              <ModeEditOutlinedIcon />
+            </IconButton>
+
+            <IconButton
+              color="primary"
+              aria-label="i-cooked-this"
+              component="label"
+              onClick={
+                hasThisRecipeBeenCookedToday ? undefined : onCookingSessionEnd
+              }
+            >
+              {hasThisRecipeBeenCookedToday ? (
+                <CheckCircleOutlinedIcon />
+              ) : (
+                <CookieIcon />
+              )}
+            </IconButton>
+            <IconButton
+              color="primary"
+              aria-label="delete"
+              component="label"
+              onClick={handleDeleteMeal}
+            >
+              <DeleteOutlinedIcon />
+            </IconButton>
+          </div>
+
           <div className={styles["edit-overlay"]}>
             <CardMedia
               className={styles["card-media"]}

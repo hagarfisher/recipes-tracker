@@ -83,6 +83,29 @@ export default function Meals({ session }: { session: Session }) {
     });
   }
 
+  async function deleteMeal(mealId: number) {
+    try {
+      setLoading(true);
+      let { error } = await supabase
+        .from(ModelNames.MEALS)
+        .update({
+          is_deleted: true,
+          created_by: user!.id,
+          updated_at: new Date(),
+        })
+        .eq("id", mealId);
+      if (error) throw error;
+      console.log("Meal deleted!");
+      setMealsData((prevState) =>
+        prevState.filter((item) => item.id != mealId)
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function updateCookingSession(mealId: number) {
     try {
       let { error } = await supabase.from(ModelNames.COOKING_EVENTS).insert({
@@ -124,7 +147,7 @@ export default function Meals({ session }: { session: Session }) {
           mealData={meal}
           onCookingSessionEnd={() => updateCookingSession(meal.id)}
           linkToAdminPage={linkToAdminPage}
-          withActions
+          handleDeleteMeal={() => deleteMeal(meal.id)}
           handleOpenDialog={() => handleRecipeEdit(index)}
         />
       ))}
