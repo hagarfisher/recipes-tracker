@@ -73,6 +73,16 @@ export default function Meals({ session }: { session: Session }) {
     }
   }
 
+  function syncMealData(updatedMealData: MealEnrichedWithCookingEvents) {
+    setMealsData((prevState) => {
+      if (currentMealDataIndex < 0) {
+        return [...prevState, updatedMealData];
+      }
+      prevState[currentMealDataIndex] = updatedMealData;
+      return prevState;
+    });
+  }
+
   async function updateCookingSession(mealId: number) {
     try {
       let { error } = await supabase.from(ModelNames.COOKING_EVENTS).insert({
@@ -127,15 +137,7 @@ export default function Meals({ session }: { session: Session }) {
               ? mealsData[currentMealDataIndex]
               : undefined
           }
-          syncMealData={(updatedMealData) => {
-            setMealsData((prevState) => {
-              if (currentMealDataIndex < 0) {
-                return [...prevState, updatedMealData];
-              }
-              prevState[currentMealDataIndex] = updatedMealData;
-              return prevState;
-            });
-          }}
+          syncMealData={syncMealData}
         />
       )}
     </div>
