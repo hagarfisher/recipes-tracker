@@ -14,7 +14,6 @@ import Button from "@mui/material/Button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
 import { MealEnrichedWithCookingEvents, Meal } from "../../types/meals";
-import EditDialog from "../../components/EditDialog/EditDialog";
 import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
 export default function Meals({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
