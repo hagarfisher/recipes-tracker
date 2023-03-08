@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   List,
   ListItem,
@@ -7,6 +8,8 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
 import Link from "next/link";
 import React from "react";
 import { RouteNames } from "../../utils/routes";
@@ -21,6 +24,7 @@ function Drawer({
   }[];
   handleDrawerToggle: () => void;
 }) {
+  const supabase = useSupabaseClient();
   return (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
@@ -28,6 +32,9 @@ function Drawer({
       </Typography>
       <Divider />
       <List>
+        <ListItem>
+          <Button onClick={() => supabase.auth.signOut()}>Sign Out</Button>
+        </ListItem>
         {navLinks.map((item) => (
           <ListItem key={item.path} disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
