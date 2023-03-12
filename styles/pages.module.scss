@@ -6,3 +6,55 @@
   background-color: $mainBackground;
   height: calc(100% - $headerHeight);
 }
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: calc(100% - $headerHeight);
+}
+
+.auth-component {
+  width: 50vw;
+  label {
+    color: $secondaryColor;
+    font-weight: 500;
+  }
+  input {
+    border-color: $primaryDarkColor;
+  }
+  .auth-button {
+    background: $primaryLightColor;
+    border: none;
+    color: white;
+    font-weight: bold;
+  }
+  .auth-button:hover {
+    background-color: rgba(63, 78, 79, 0.9);
+  }
+
+  @media only screen and (max-width: 400px) {
+    width: 80vw;
+  }
+  @media only screen and (min-width: 1024px) {
+    width: 35vw;
+  }
+
+  @media only screen and (min-width: 2000px) {
+    width: 25vw;
+    font-size: 1.4em;
+    font-weight: 600;
+    label {
+      font-size: 0.5em;
+    }
+    input {
+      font-size: 0.6em;
+      height: 5vh;
+    }
+    button {
+      font-size: 0.8em;
+      height: 5vh;
+    }
+  }
+}

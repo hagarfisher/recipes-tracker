@@ -10,11 +10,18 @@ const Home = () => {
   return (
     <div className={styles.container}>
       {!session ? (
-        <Auth
-          supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          theme="dark"
-        />
+        <div className={styles["auth-container"]}>
+          <Auth
+            supabaseClient={supabase}
+            appearance={{
+              theme: ThemeSupa,
+              className: {
+                container: styles["auth-component"],
+                button: styles["auth-button"],
+              },
+            }}
+          />
+        </div>
       ) : (
         <Meals session={session} />
       )}

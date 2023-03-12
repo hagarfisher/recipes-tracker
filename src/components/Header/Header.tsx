@@ -14,11 +14,13 @@ import { Drawer } from "@mui/material";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DrawerMenu from "./DrawerMenu";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSession } from "@supabase/auth-helpers-react";
 
 const drawerWidth = 240;
 
 export default function Header() {
   const supabase = useSupabaseClient();
+  const session = useSession();
   const { isMobile } = useDeviceDetect();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -44,9 +46,11 @@ export default function Header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Recipes Tracker
           </Typography>
-          <Button color="inherit" onClick={() => supabase.auth.signOut()}>
-            Sign Out
-          </Button>
+          {session && (
+            <Button color="inherit" onClick={() => supabase.auth.signOut()}>
+              Sign Out
+            </Button>
+          )}
           {!isMobile &&
             navLinks.map((link, index) => {
               return (
