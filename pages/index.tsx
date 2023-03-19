@@ -20,6 +20,8 @@ const Home = () => {
                 button: styles["auth-button"],
               },
             }}
+            providers={["google"]}
+            socialLayout="vertical"
           />
         </div>
       ) : (
