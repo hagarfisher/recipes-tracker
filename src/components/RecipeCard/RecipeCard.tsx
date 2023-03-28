@@ -36,8 +36,6 @@ interface Props {
   mealData: Partial<MealEnrichedWithCookingEvents>;
   handleOpenDialog?: () => void;
   onCookingSessionEnd?: MouseEventHandler<HTMLLabelElement>;
-  linkToAdminPage?: string;
-  isEditMode?: boolean;
   setDescription?: (value: string) => void;
   setTitle?: (value: string) => void;
   setRecipeUrl?: (value: string) => void;
