@@ -49,8 +49,6 @@ export default function RecipeCard({
   mealData,
   handleOpenDialog,
   onCookingSessionEnd,
-  linkToAdminPage,
-  isEditMode,
   setDescription,
   setTitle,
   setRecipeUrl,
@@ -112,77 +110,33 @@ export default function RecipeCard({
             <CardMedia
               className={styles["card-media"]}
               sx={{ height: 140 }}
-              image={imageUrl}
+              image={error ? defaultImagePath : imageUrl}
               title="recipe-thumbnail"
             />
-            {isEditMode && (
-              <div className={styles["edit-icon"]}>
-                <Picture
-                  unique_id={uuidv4()}
-                  url={mealData?.image_url ?? ""}
-                  size={150}
-                  onUpload={(url: string) => {
-                    if (setMealImageUrl) {
-                      setMealImageUrl(url);
-                    }
-                  }}
-                  collectionName={CollectionNames.MEAL_IMAGES}
-                  canEdit={true}
-                />
-              </div>
-            )}
           </div>
         </>
       )}
 
       <CardContent className={styles["card-content"]}>
-        {isEditMode ? (
-          <TextField
-            variant="standard"
-            value={mealData.name}
-            onChange={(event) => setTitle?.(event.target.value)}
-            placeholder="Recipe title.."
-          />
-        ) : (
-          <Tooltip title={mealData.name} placement="top-start">
-            <Typography
-              gutterBottom
-              variant="h5"
-              textTransform={"capitalize"}
-              component="div"
-              className={styles["card-title"]}
-            >
-              {mealData.name}
-            </Typography>
-          </Tooltip>
-        )}
-
-        {isEditMode ? (
-          <TextField
-            placeholder="Description.."
-            variant="standard"
-            value={mealData.description}
-            multiline
-            maxRows={5}
-            onChange={(event) => setDescription?.(event.target.value)}
-          />
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {mealData.description}
+        <Tooltip title={mealData.name} placement="top-start">
+          <Typography
+            gutterBottom
+            variant="h5"
+            textTransform={"capitalize"}
+            component="div"
+            className={styles["card-title"]}
+          >
+            {mealData.name}
           </Typography>
-        )}
-        {isEditMode ? (
-          <TextField
-            variant="standard"
-            value={mealData.recipe_url}
-            onChange={(event) => setRecipeUrl?.(event.target.value)}
-            placeholder="https://recipes-tracker.strafer.dev/"
-          />
-        ) : (
-          <MaterialLink target={"_blank"} href={mealData.recipe_url ?? ""}>
-            Recipe
-          </MaterialLink>
-        )}
+        </Tooltip>
+
+        <Typography variant="body2" color="text.secondary">
+          {mealData.description}
+        </Typography>
+
+        <MaterialLink target={"_blank"} href={mealData.recipe_url ?? ""}>
+          Recipe
+        </MaterialLink>
       </CardContent>
     </Card>
   );
