@@ -7,18 +7,23 @@
   width: 100%;
 
   .card-title {
-    width: 20vw;
-    word-break: break-all;
-    overflow-wrap: break-word;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
+    width: 16vw;
+    font-size: 1.2em;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   @media only screen and (max-width: 800px) {
     .card-title {
       width: 100%;
+    }
+  }
+
+  @media only screen and (min-width: 2000px) {
+    .card-title {
+      width: 9vw;
     }
   }
   .card-content {
@@ -55,9 +60,4 @@
       }
     }
   }
-  // @media screen and (min-width: 1024px) {
-  //   .card {
-  //     max-width: 20vw
-  //   }
-  // }
 }
