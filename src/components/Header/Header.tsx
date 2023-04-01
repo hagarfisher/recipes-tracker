@@ -1,5 +1,5 @@
 import React from "react";
-import { navLinks } from "../../utils/routes";
+import { navLinks, RouteNames } from "../../utils/routes";
 import Link from "next/link";
 import styles from "./Header.module.scss";
 
@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { Drawer } from "@mui/material";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DrawerMenu from "./DrawerMenu";
@@ -30,7 +31,7 @@ export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
           {isMobile && (
             <IconButton
               size="large"
@@ -43,21 +44,33 @@ export default function Header() {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Recipes Tracker
-          </Typography>
-          {!isMobile &&
-            navLinks.map((link, index) => {
-              return (
-                <Button color="inherit" key={link.path}>
-                  <Link href={link.path}>{link.name}</Link>
+
+          <Link
+            className={styles["home-page-link"]}
+            href={
+              navLinks.find((item) => item.name === RouteNames.HOME)?.path ??
+              "/"
+            }
+          >
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Recipes Tracker
+            </Typography>
+          </Link>
+          {!isMobile && (
+            <div className={styles["nav-links"]}>
+              {navLinks.map((link, index) => {
+                return (
+                  <Button color="inherit" key={link.path}>
+                    <Link href={link.path}>{link.name}</Link>
+                  </Button>
+                );
+              })}
+              {session && (
+                <Button color="inherit" onClick={() => supabase.auth.signOut()}>
+                  <LogoutOutlinedIcon />
                 </Button>
-              );
-            })}
-          {session && (
-            <Button color="inherit" onClick={() => supabase.auth.signOut()}>
-              Sign Out
-            </Button>
+              )}
+            </div>
           )}
         </Toolbar>
       </AppBar>
