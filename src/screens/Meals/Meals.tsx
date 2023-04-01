@@ -1,20 +1,18 @@
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { CircularProgress } from "@mui/material";
+import Button from "@mui/material/Button";
 import {
   Session,
   useSupabaseClient,
   useUser,
 } from "@supabase/auth-helpers-react";
-import Link from "next/link";
-
 import { useEffect, useState } from "react";
-import { Database, ModelNames } from "../../utils/models";
-import { RouteNames, navLinks } from "../../utils/routes";
-import RecipeCard from "../../components/RecipeCard/RecipeCard";
-import styles from "./Meals.module.scss";
-import Button from "@mui/material/Button";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { CircularProgress } from "@mui/material";
-import { MealEnrichedWithCookingEvents, Meal } from "../../types/meals";
 import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
+import RecipeCard from "../../components/RecipeCard/RecipeCard";
+import { MealEnrichedWithCookingEvents } from "../../types/meals";
+import { Database, ModelNames } from "../../utils/models";
+import styles from "./Meals.module.scss";
+
 export default function Meals({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const [loading, setLoading] = useState(true);
@@ -38,14 +36,10 @@ export default function Meals({ session }: { session: Session }) {
 
   const user = useUser();
 
-  const linkToAdminPage = navLinks.find(
-    (link) => link.name === RouteNames.ADMIN
-  )?.path;
-
   useEffect(() => {
     getMeals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session.access_token]);
 
   if (!user) {
     return null;
@@ -131,13 +125,7 @@ export default function Meals({ session }: { session: Session }) {
         onClick={() => handleRecipeEdit(-1)}
         variant="contained"
       >
-        {/* <Link
-          href={{
-            pathname: linkToAdminPage ?? "",
-          }}
-        > */}
         Add new meal
-        {/* </Link> */}
         <AddRoundedIcon />
       </Button>
       {mealsData.map((meal, index) => (

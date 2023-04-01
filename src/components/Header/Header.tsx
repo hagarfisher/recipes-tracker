@@ -46,11 +46,6 @@ export default function Header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Recipes Tracker
           </Typography>
-          {session && (
-            <Button color="inherit" onClick={() => supabase.auth.signOut()}>
-              Sign Out
-            </Button>
-          )}
           {!isMobile &&
             navLinks.map((link, index) => {
               return (
@@ -59,6 +54,11 @@ export default function Header() {
                 </Button>
               );
             })}
+          {session && (
+            <Button color="inherit" onClick={() => supabase.auth.signOut()}>
+              Sign Out
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Box component="nav">

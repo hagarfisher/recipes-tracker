@@ -8,59 +8,40 @@ import styles from "./Picture.module.scss";
 
 export default function Picture({
   unique_id: uid,
-  url,
-  size,
   collectionName,
   onUpload,
   canEdit = false,
 }: {
   unique_id?: string;
-  url: string;
-  size: number;
+
   collectionName: CollectionNames;
   onUpload?: (url: string) => void;
   canEdit?: boolean;
 }) {
   const supabase = useSupabaseClient<Database>();
   const [pictureUrl, setPictureUrl] = useState<string>();
-  const [uploading, setUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [isFromUrl, setIsFromUrl] = useState(false);
 
   const urlInput = (
     <TextField
       variant="standard"
       color="primary"
+      value={pictureUrl}
       className={styles["image-url-input"]}
       hiddenLabel
-      onChange={(event) => setPictureUrl(event.target.value)}
+      onChange={(event) => {
+        setPictureUrl(event.target.value);
+        onUpload?.(event.target.value);
+      }}
     />
   );
-
-  // useEffect(() => {
-  //   if (url) downloadImage(url);
-  // }, [url]);
-
-  async function downloadImage(path: string) {
-    try {
-      const { data, error } = await supabase.storage
-        .from(collectionName)
-        .download(path);
-      if (error) {
-        throw error;
-      }
-      const url = URL.createObjectURL(data);
-      setPictureUrl(url);
-    } catch (error) {
-      console.log("Error downloading image: ", error);
-    }
-  }
 
   const uploadPicture: React.ChangeEventHandler<HTMLInputElement> = async (
     event
   ) => {
     try {
-      setUploading(true);
-
+      setIsUploading(true);
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error("You must select an image to upload.");
       }
@@ -81,12 +62,11 @@ export default function Picture({
         .from(collectionName)
         .getPublicUrl(filePath);
 
-      console.log(data.publicUrl);
       onUpload?.(data.publicUrl);
     } catch (error) {
       console.error(error);
     } finally {
-      setUploading(false);
+      setIsUploading(false);
     }
   };
 
@@ -104,15 +84,15 @@ export default function Picture({
             <input
               type="file"
               hidden
-              id="uplaod-image"
+              id="upload-image"
               onChange={uploadPicture}
-              disabled={uploading}
+              disabled={isUploading}
               accept="image/*"
             />
           </Button>
           <Button
             onClick={() => {
-              setIsFromUrl((prevState) => !prevState);
+              setIsFromUrl(!isFromUrl);
             }}
             variant="contained"
             className={styles["edit-img-button"]}
