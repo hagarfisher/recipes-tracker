@@ -145,7 +145,6 @@ export default function Meals({ session }: { session: Session }) {
           key={meal.id}
           mealData={meal}
           onCookingSessionEnd={() => updateCookingSession(meal.id)}
-          linkToAdminPage={linkToAdminPage}
           handleDeleteMeal={() => deleteMeal(meal.id)}
           handleOpenDialog={() => handleRecipeEdit(index)}
         />

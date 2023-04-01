@@ -1,27 +1,24 @@
 @import "../../../styles/variables.module.scss";
 
 .picture-wrapper {
-  // display: grid;
-  // justify-content: center;
-  // align-content: center;
-  // .upload-input {
-  //   &:hover {
-  //     color: $primaryDarkColor;
-  //   }
-  //   background-color: $primaryLightColor;
-  //   label {
-  //       cursor: pointer;
-  //   }
-  // }
-  .label {
-    display: flex;
-    width: 1.5em;
-    border-radius: 35%;
-    background-color: rgba(251, 251, 251, 0.2);
+  .edit-img-button {
+    background-color: rgba(251, 251, 251, 0.6);
+    color: $primaryDarkColor;
+    padding: 0.5em;
+    margin: 0.2em;
+    min-width: 2em;
+    &:hover {
+      transition: 0.3s;
+      background-color: rgba(251, 251, 251, 0.7);
+    }
+    .edit-icon {
+      font-size: large;
+    }
   }
-  .label:hover {
-    transition: 0.3s;
-    cursor: pointer;
-    background-color: rgba(251, 251, 251, 0.7);
+  .image-url-input {
+    background-color: rgba(251, 251, 251, 0.3);
+    // border-radius: 5%;
+    // padding: 0;
+    margin: 0.2em;
   }
 }

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
+import { Button, Fade, TextField } from "@mui/material";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import styles from "./Picture.module.scss";
+import React, { useState } from "react";
 import { CollectionNames, Database } from "../../utils/models";
-import { IconButton, Input } from "@mui/material";
-import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
+import styles from "./Picture.module.scss";
 
 export default function Picture({
   unique_id: uid,
@@ -23,10 +24,21 @@ export default function Picture({
   const supabase = useSupabaseClient<Database>();
   const [pictureUrl, setPictureUrl] = useState<string>();
   const [uploading, setUploading] = useState(false);
+  const [isFromUrl, setIsFromUrl] = useState(false);
 
-  useEffect(() => {
-    if (url) downloadImage(url);
-  }, [url]);
+  const urlInput = (
+    <TextField
+      variant="standard"
+      color="primary"
+      className={styles["image-url-input"]}
+      hiddenLabel
+      onChange={(event) => setPictureUrl(event.target.value)}
+    />
+  );
+
+  // useEffect(() => {
+  //   if (url) downloadImage(url);
+  // }, [url]);
 
   async function downloadImage(path: string) {
     try {
@@ -65,7 +77,11 @@ export default function Picture({
       if (uploadError) {
         throw uploadError;
       }
+      const { data } = supabase.storage
+        .from(collectionName)
+        .getPublicUrl(filePath);
 
+      console.log(data);
       onUpload?.(filePath);
     } catch (error) {
       console.error(error);
@@ -76,30 +92,35 @@ export default function Picture({
 
   return (
     <div className={styles["picture-wrapper"]}>
-      {/* {pictureUrl ? (
-        <img
-          src={pictureUrl}
-          alt="Picture"
-          style={{ height: size, width: size }}
-        />
-      ) : (
-        <div style={{ height: size, width: size }} />
-      )} */}
       {canEdit && (
-        <div>
-          <label className={styles.label} htmlFor="uplaod-image">
-            <ModeEditOutlinedIcon color="primary" />
-          </label>
-
-          <input
-            hidden
-            type="file"
-            id="uplaod-image"
-            onChange={uploadPicture}
-            disabled={uploading}
-            accept="image/*"
-          />
-        </div>
+        <>
+          <Button
+            variant="contained"
+            component="label"
+            className={styles["edit-img-button"]}
+            disabled={isFromUrl}
+          >
+            <FileUploadOutlinedIcon className={styles["edit-icon"]} />
+            <input
+              type="file"
+              hidden
+              id="uplaod-image"
+              onChange={uploadPicture}
+              disabled={uploading}
+              accept="image/*"
+            />
+          </Button>
+          <Button
+            onClick={() => {
+              setIsFromUrl((prevState) => !prevState);
+            }}
+            variant="contained"
+            className={styles["edit-img-button"]}
+          >
+            <LinkOutlinedIcon className={styles["edit-icon"]} />
+          </Button>
+          <Fade in={isFromUrl}>{urlInput}</Fade>
+        </>
       )}
     </div>
   );

@@ -1,36 +1,25 @@
-import React, { useEffect, useState } from "react";
 import { MouseEventHandler } from "react";
 import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
 import { defaultImagePath } from "../../utils/constants";
-import { CollectionNames, Database, ModelNames } from "../../utils/models";
-import { v4 as uuidv4 } from "uuid";
+import { CollectionNames, Database } from "../../utils/models";
 
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import CookieIcon from "@mui/icons-material/Cookie";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import {
-  Meal,
-  Meal as MealType,
-  MealEnrichedWithCookingEvents,
-} from "../../types/meals";
-import styles from "./RecipeCard.module.scss";
-import {
-  Button,
   Card,
-  CardActions,
   CardContent,
   CardMedia,
-  Typography,
-  Tooltip,
   IconButton,
-  TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import MaterialLink from "@mui/material/Link";
-import Link from "next/link";
-import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-import CookieIcon from "@mui/icons-material/Cookie";
-import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { isWithinLastDay } from "../../utils/date";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
-import Picture from "../Picture/Picture";
+import { MealEnrichedWithCookingEvents } from "../../types/meals";
+import { isWithinLastDay } from "../../utils/date";
+import styles from "./RecipeCard.module.scss";
 
 interface Props {
   mealData: Partial<MealEnrichedWithCookingEvents>;

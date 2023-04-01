@@ -42,10 +42,10 @@ export default function EditableRecipeCard({
   handleClose,
   syncMealData,
 }: Props) {
-  const [title, setTitle] = useState(mealData?.name);
-  const [description, setDescription] = useState(mealData?.description);
-  const [recipeUrl, setRecipeUrl] = useState(mealData?.recipe_url);
-  const [mealImageUrl, setMealImageUrl] = useState(mealData?.image_url);
+  const [title, setTitle] = useState(mealData?.name ?? "");
+  const [description, setDescription] = useState(mealData?.description ?? "");
+  const [recipeUrl, setRecipeUrl] = useState(mealData?.recipe_url ?? "");
+  const [mealImageUrl, setMealImageUrl] = useState(mealData?.image_url ?? "");
 
   console.log(mealData, title, description, recipeUrl, mealImageUrl);
 
