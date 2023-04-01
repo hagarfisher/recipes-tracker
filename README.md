@@ -1,6 +1,7 @@
 # Recipe Tracker
 
-![Recipe Tracker](insert-image-here)
+<div align="center"><img src="https://recipe-tracker-1.s3.amazonaws.com/demo.png" width="70%" margin-right="50%"></div>
+
 
 Recipe Tracker is a web application built with Next.js that allows users to keep track of their favorite recipes. Users can save them to their profile, and add their own recipes.
 
