@@ -112,8 +112,6 @@ export default function EditableRecipeCard({
                   <div className={styles["edit-icon"]}>
                     <Picture
                       unique_id={uuidv4()}
-                      url={mealImageUrl ?? ""}
-                      size={150}
                       onUpload={(url: string) => {
                         console.log("this is from editable card ", url);
                         if (setMealImageUrl) {

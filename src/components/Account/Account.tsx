@@ -19,6 +19,7 @@ export default function Account({ session }: { session: Session }) {
 
   useEffect(() => {
     getProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   async function getProfile() {
@@ -80,8 +81,6 @@ export default function Account({ session }: { session: Session }) {
       <div className={styles["form-widget"]}>
         <Picture
           unique_id={user.id}
-          url={avatar_url ?? ''}
-          size={150}
           onUpload={(url: string) => {
             setAvatarUrl(url);
             updateProfile({ username, avatar_url: url });
