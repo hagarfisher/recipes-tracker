@@ -45,17 +45,17 @@ export default function EditableRecipeCard({
   const [title, setTitle] = useState(mealData?.name ?? "");
   const [description, setDescription] = useState(mealData?.description ?? "");
   const [recipeUrl, setRecipeUrl] = useState(mealData?.recipe_url ?? "");
-  const [mealImageUrl, setMealImageUrl] = useState(mealData?.image_url ?? "");
-
-  console.log(mealData, title, description, recipeUrl, mealImageUrl);
+  const [mealImageUrl, setMealImageUrl] = useState(
+    mealData?.image_url ?? defaultImagePath
+  );
 
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
 
-  const { imageUrl, isLoading, error } = useResolveImageUrl(
-    CollectionNames.MEAL_IMAGES,
-    mealImageUrl ?? defaultImagePath
-  );
+  // const { imageUrl, isLoading, error } = useResolveImageUrl(
+  //   CollectionNames.MEAL_IMAGES,
+  //   mealImageUrl ?? defaultImagePath
+  // );
   async function updateOrCreateMeal(mealData: Partial<Meal>) {
     try {
       const { data: freshMealDataFromServer, error } = await supabase
@@ -99,22 +99,23 @@ export default function EditableRecipeCard({
         <DialogTitle id="edit-dialog-title">{"Edit Meal"}</DialogTitle>
         <DialogContent>
           <Card className={styles.card}>
-            {!isLoading && !error && (
+            {
               <>
                 <div className={styles["edit-overlay"]}>
                   <CardMedia
                     className={styles["card-media"]}
                     sx={{ height: 140 }}
-                    image={imageUrl}
+                    image={mealImageUrl}
                     title="recipe-thumbnail"
                   />
 
                   <div className={styles["edit-icon"]}>
                     <Picture
                       unique_id={uuidv4()}
-                      url={imageUrl ?? ""}
+                      url={mealImageUrl ?? ""}
                       size={150}
                       onUpload={(url: string) => {
+                        console.log("this is from editable card ", url);
                         if (setMealImageUrl) {
                           setMealImageUrl(url);
                         }
@@ -125,7 +126,7 @@ export default function EditableRecipeCard({
                   </div>
                 </div>
               </>
-            )}
+            }
 
             <CardContent className={styles["card-content"]}>
               <TextField

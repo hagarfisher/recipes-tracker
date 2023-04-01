@@ -45,11 +45,6 @@ export default function RecipeCard({
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
 
-  const { imageUrl, isLoading, error } = useResolveImageUrl(
-    CollectionNames.MEAL_IMAGES,
-    mealData.image_url ?? defaultImagePath
-  );
-
   // TODO: somehow deal with tags, display them etc.
   const hasThisRecipeBeenCookedToday = mealData.cooking_events?.find(
     (cookingEvent) => isWithinLastDay(new Date(cookingEvent.created_at))
@@ -57,7 +52,7 @@ export default function RecipeCard({
 
   return (
     <Card className={styles.card}>
-      {!isLoading && !error && (
+      {
         <>
           <div className={styles["action-icons"]}>
             <IconButton
@@ -97,12 +92,12 @@ export default function RecipeCard({
             <CardMedia
               className={styles["card-media"]}
               sx={{ height: 140 }}
-              image={error ? defaultImagePath : imageUrl}
+              image={mealData.image_url ?? defaultImagePath}
               title="recipe-thumbnail"
             />
           </div>
         </>
-      )}
+      }
 
       <CardContent className={styles["card-content"]}>
         <Tooltip title={mealData.name} placement="top-start">

@@ -81,8 +81,8 @@ export default function Picture({
         .from(collectionName)
         .getPublicUrl(filePath);
 
-      console.log(data);
-      onUpload?.(filePath);
+      console.log(data.publicUrl);
+      onUpload?.(data.publicUrl);
     } catch (error) {
       console.error(error);
     } finally {
