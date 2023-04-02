@@ -25,62 +25,73 @@ export default function Header() {
   const { isMobile } = useDeviceDetect();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const linkToHome = (
+    <Link
+      className={styles["home-page-link"]}
+      href={navLinks.find((item) => item.name === RouteNames.HOME)?.path ?? "/"}
+    >
+      <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        Recipes Tracker
+      </Typography>
+    </Link>
+  );
+
+  const signOutButton = (
+    <IconButton color="inherit" onClick={() => supabase.auth.signOut()}>
+      <LogoutOutlinedIcon />
+    </IconButton>
+  );
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box className={styles["header"]} sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
-          {isMobile && (
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
+          {isMobile ? (
+            <div className={styles["mobile-menu-container"]}>
+              <div className={styles["links-container"]}>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  onClick={handleDrawerToggle}
+                  sx={{ mr: 2 }}
+                >
+                  <MenuIcon />
+                </IconButton>
 
-          <Link
-            className={styles["home-page-link"]}
-            href={
-              navLinks.find((item) => item.name === RouteNames.HOME)?.path ??
-              "/"
-            }
-          >
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Recipes Tracker
-            </Typography>
-          </Link>
-          {!isMobile && (
+                {linkToHome}
+              </div>
+
+              {session && signOutButton}
+            </div>
+          ) : (
             <div className={styles["nav-links"]}>
-              {navLinks.map((link, index) => {
-                return (
-                  <Button color="inherit" key={link.path}>
-                    <Link href={link.path}>{link.name}</Link>
-                  </Button>
-                );
-              })}
-              {session && (
-                <Button color="inherit" onClick={() => supabase.auth.signOut()}>
-                  <LogoutOutlinedIcon />
-                </Button>
-              )}
+              {linkToHome}
+              <div>
+                {navLinks.map((link, index) => {
+                  return (
+                    <Button color="inherit" key={link.path}>
+                      <Link href={link.path}>{link.name}</Link>
+                    </Button>
+                  );
+                })}
+                {session && signOutButton}
+              </div>
             </div>
           )}
         </Toolbar>
       </AppBar>
+
       <Box component="nav">
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             // display: { xs: "block", sm: "none" },
