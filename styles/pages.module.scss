@@ -58,3 +58,10 @@
     }
   }
 }
+.analytics-chart {
+  width: 100vw;
+  height: calc(100% - $headerHeight);
+  display: flex;
+  justify-items: center;
+  padding: 3em;
+}
