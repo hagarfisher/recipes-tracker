@@ -19,6 +19,7 @@
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/auth-ui-react": "^0.2.6",
     "@supabase/supabase-js": "^2.4.0",
+    "appwrite": "^11.0.0",
     "eslint": "8.30.0",
     "eslint-config-next": "13.1.1",
     "faker": "^5.5.3",
@@ -33,6 +34,9 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "@types/uuid": "^9.0.0",
+    "bson-objectid": "^2.0.4",
+    "dotenv": "^16.0.3",
+    "node-appwrite": "^9.0.0",
     "sass": "^1.57.1",
     "typescript": "^4.9.4"
   }
