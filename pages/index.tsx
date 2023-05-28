@@ -1,31 +1,41 @@
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import Meals from "../src/screens/Meals/Meals";
+import { useContext, useEffect, useState } from "react";
+import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
 import styles from "../styles/pages.module.scss";
+import { AppwriteException, Models } from "appwrite";
+import { Sign } from "crypto";
+import Auth from "../src/components/Authentication/Auth";
 
 const Home = () => {
-  const session = useSession();
-  const supabase = useSupabaseClient();
+  const { account } = useContext(AppWriteClientContext);
+  const [user, setUser] = useState<Models.User<Models.Preferences> | null>(
+    null
+  );
 
+  useEffect(() => {
+    async function fetchUserSessionData() {
+      if (!account) {
+        return;
+      }
+      try {
+        const user = await account.get();
+        setUser(user);
+      } catch (error) {
+        if (!(error instanceof AppwriteException)) {
+          console.error(error);
+        }
+      }
+    }
+    fetchUserSessionData();
+  }, [account]);
   return (
     <div className={styles.container}>
-      {!session ? (
+      {!user ? (
         <div className={styles["auth-container"]}>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              className: {
-                container: styles["auth-component"],
-                button: styles["auth-button"],
-              },
-            }}
-            providers={["google"]}
-            socialLayout="vertical"
-          />
+          <Auth />
         </div>
       ) : (
-        <Meals session={session} />
+        // <Meals session={session} />
+        <div>signed in</div>
       )}
     </div>
   );
