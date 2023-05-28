@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { navLinks, RouteNames } from "../../utils/routes";
 import Link from "next/link";
 import styles from "./Header.module.scss";
@@ -14,16 +14,22 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { Drawer } from "@mui/material";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DrawerMenu from "./DrawerMenu";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useSession } from "@supabase/auth-helpers-react";
-
+import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
 const drawerWidth = 240;
 
 export default function Header() {
-  const supabase = useSupabaseClient();
-  const session = useSession();
+  const { account } = useContext(AppWriteClientContext);
+
+  // const session = useSession();
   const { isMobile } = useDeviceDetect();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleLogout = async () => {
+    if (account) {
+      const session = await account?.getSession("current");
+      await account.deleteSession(session.$id);
+    }
+  };
 
   const linkToHome = (
     <Link
@@ -37,7 +43,7 @@ export default function Header() {
   );
 
   const signOutButton = (
-    <IconButton color="inherit" onClick={() => supabase.auth.signOut()}>
+    <IconButton color="inherit" onClick={() => handleLogout()}>
       <LogoutOutlinedIcon />
     </IconButton>
   );
@@ -65,7 +71,7 @@ export default function Header() {
                 {linkToHome}
               </div>
 
-              {session && signOutButton}
+              {account && signOutButton}
             </div>
           ) : (
             <div className={styles["nav-links"]}>
@@ -78,7 +84,7 @@ export default function Header() {
                     </Button>
                   );
                 })}
-                {session && signOutButton}
+                {account && signOutButton}
               </div>
             </div>
           )}
