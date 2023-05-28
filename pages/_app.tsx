@@ -11,6 +11,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { Client, Account } from "appwrite";
 
 export default function App({
   Component,
@@ -19,6 +20,14 @@ export default function App({
   initialSession: Session;
 }>) {
   const [supabase] = useState(() => createBrowserSupabaseClient());
+
+  if (process.env.APPWRITE_PROJECT_ID) {
+    const client = new Client()
+      .setEndpoint("https://cloud.appwrite.io/v1")
+      .setProject(process.env.APPWRITE_PROJECT_ID);
+  } else {
+    console.error("APPWRITE_PROJECT_ID is not set");
+  }
 
   return (
     <SessionContextProvider
