@@ -1,5 +1,4 @@
-import { Client, Databases, Models } from "node-appwrite";
-import ObjectID from "bson-objectid";
+import { Client, Databases, Models, ID } from "node-appwrite";
 import * as dotenv from "dotenv";
 import * as path from "path";
 
@@ -122,10 +121,7 @@ async function syncDbEntity(databases: Databases) {
   );
 
   if (!relevantDatabase) {
-    relevantDatabase = await databases.create(
-      ObjectID().toHexString(),
-      DB_NAME
-    );
+    relevantDatabase = await databases.create(ID.unique(), DB_NAME);
   }
   return relevantDatabase;
 }
@@ -150,7 +146,7 @@ async function syncCollections(
     existingCollections.push(
       await databases.createCollection(
         relevantDatabase.$id,
-        ObjectID().toHexString(),
+        ID.unique(),
         nonExistingCollection
       )
     );
@@ -246,7 +242,10 @@ async function createAttribute(
 }
 
 export async function syncDb() {
-  if (!process.env.APPWRITE_PROJECT_ID || !process.env.APPWRITE_SECRET_KEY) {
+  if (
+    !process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID ||
+    !process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID
+  ) {
     throw new Error("Missing AppWrite credentials");
   }
 
@@ -255,8 +254,8 @@ export async function syncDb() {
 
   client
     .setEndpoint(APPWRITE_ENDPOINT) // Your Appwrite Endpoint
-    .setProject(process.env.APPWRITE_PROJECT_ID) // Your project ID
-    .setKey(process.env.APPWRITE_SECRET_KEY); // Your secret API key
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID) // Your project ID
+    .setKey(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID); // Your secret API key
 
   const relevantDatabase = await syncDbEntity(databases);
   const relevantCollections = await syncCollections(
