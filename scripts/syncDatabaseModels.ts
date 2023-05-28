@@ -10,6 +10,7 @@ interface Attribute {
   type: AttributeType;
   required: boolean;
   default?: any;
+  array?: boolean;
 }
 
 interface StringAttribute extends Attribute {
@@ -69,15 +70,18 @@ const COLLECTIONS = {
         default: "646e5e3753d0e8528902",
         required: false,
       },
-    ],
-    relationships: [
       {
         key: "tags",
-        relatedCollectionId: "",
-        type: "manyToMany",
-        twoWay: true,
-        twoWayKey: "meals",
-        onDelete: "setNull",
+        size: 20,
+        type: AttributeType.STRING,
+        required: false,
+        array: true,
+      },
+      {
+        key: "createdBy",
+        size: 20,
+        type: AttributeType.STRING,
+        required: true,
       },
     ],
   },
@@ -94,14 +98,17 @@ const COLLECTIONS = {
         type: AttributeType.DATE_TIME,
         required: true,
       },
-    ],
-    relationships: [
       {
-        key: "meals",
-        relatedCollectionId: "",
-        type: "oneToOne",
-        twoWay: true,
-        twoWayKey: "cookingEvents",
+        key: "meal",
+        type: AttributeType.STRING,
+        size: 20,
+        required: true,
+      },
+      {
+        key: "createdBy",
+        type: AttributeType.STRING,
+        size: 20,
+        required: true,
       },
     ],
   },
@@ -155,7 +162,6 @@ async function syncAttributes(
   databases: Databases,
   relevantCollections: Models.Collection[]
 ) {
-  // TODO: implement me
   for (let relevantCollection of relevantCollections) {
     const collectionAttributes =
       COLLECTIONS[relevantCollection.name as keyof typeof COLLECTIONS]
@@ -168,6 +174,7 @@ async function syncAttributes(
     }
   }
 }
+
 async function createAttribute(
   attribute: StringAttribute | Attribute,
   relevantCollection: Models.Collection,
@@ -178,7 +185,7 @@ async function createAttribute(
       attribute.type
     } for collection ${relevantCollection.name}`
   );
-  const { type, key, required, default: defaultValue } = attribute;
+  const { type, key, required, default: defaultValue, array } = attribute;
   const { size } = attribute as StringAttribute;
   try {
     switch (type) {
@@ -189,7 +196,8 @@ async function createAttribute(
           key,
           size,
           required,
-          defaultValue
+          defaultValue,
+          array
         );
         break;
       case AttributeType.URL:
@@ -198,7 +206,8 @@ async function createAttribute(
           relevantCollection.$id,
           key,
           required,
-          defaultValue
+          defaultValue,
+          array
         );
         break;
       case AttributeType.BOOLEAN:
@@ -207,7 +216,8 @@ async function createAttribute(
           relevantCollection.$id,
           key,
           required,
-          defaultValue
+          defaultValue,
+          array
         );
         break;
       case AttributeType.DATE_TIME:
@@ -216,7 +226,8 @@ async function createAttribute(
           relevantCollection.$id,
           key,
           required,
-          defaultValue
+          defaultValue,
+          array
         );
         break;
       default:
