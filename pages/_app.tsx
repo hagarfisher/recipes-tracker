@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
+import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
 import { AppProps } from "next/app";
 import "../styles/globals.scss";
 import Head from "next/head";
@@ -21,19 +22,17 @@ export default function App({
 }>) {
   const [supabase] = useState(() => createBrowserSupabaseClient());
 
-  if (process.env.APPWRITE_PROJECT_ID) {
-    const client = new Client()
-      .setEndpoint("https://cloud.appwrite.io/v1")
-      .setProject(process.env.APPWRITE_PROJECT_ID);
-  } else {
-    console.error("APPWRITE_PROJECT_ID is not set");
+  if (!process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID) {
+    console.error("NEXT_PUBLIC_APPWRITE_PROJECT_ID is not set");
+    return null;
   }
 
+  const client = new Client()
+    .setEndpoint("https://cloud.appwrite.io/v1")
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
+  const account = new Account(client);
   return (
-    <SessionContextProvider
-      supabaseClient={supabase}
-      initialSession={pageProps.initialSession}
-    >
+    <AppWriteClientContext.Provider value={{ account, client }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline enableColorScheme />
         <Head>
@@ -43,6 +42,6 @@ export default function App({
         <Header />
         <Component {...pageProps} />
       </ThemeProvider>
-    </SessionContextProvider>
+    </AppWriteClientContext.Provider>
   );
 }
