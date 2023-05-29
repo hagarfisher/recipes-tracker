@@ -1,35 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import Auth from "../src/components/Authentication/Auth";
 import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
 import styles from "../styles/pages.module.scss";
-import { AppwriteException, Models } from "appwrite";
-import { Sign } from "crypto";
-import Auth from "../src/components/Authentication/Auth";
 
 const Home = () => {
-  const { account } = useContext(AppWriteClientContext);
-  const [user, setUser] = useState<Models.User<Models.Preferences> | null>(
-    null
-  );
+  const { session } = useContext(AppWriteClientContext);
 
-  useEffect(() => {
-    async function fetchUserSessionData() {
-      if (!account) {
-        return;
-      }
-      try {
-        const user = await account.get();
-        setUser(user);
-      } catch (error) {
-        if (!(error instanceof AppwriteException)) {
-          console.error(error);
-        }
-      }
-    }
-    fetchUserSessionData();
-  }, [account]);
   return (
     <div className={styles.container}>
-      {!user ? (
+      {!session ? (
         <div className={styles["auth-container"]}>
           <Auth />
         </div>
