@@ -1,26 +1,25 @@
+import Link from "next/link";
 import React, { useContext } from "react";
 import { navLinks, RouteNames } from "../../utils/routes";
-import Link from "next/link";
 import styles from "./Header.module.scss";
 
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Drawer } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { Drawer } from "@mui/material";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DrawerMenu from "./DrawerMenu";
-import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
 const drawerWidth = 240;
 
 export default function Header() {
-  const { account } = useContext(AppWriteClientContext);
+  const { account, setSession } = useContext(AppWriteClientContext);
 
-  // const session = useSession();
   const { isMobile } = useDeviceDetect();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -28,6 +27,7 @@ export default function Header() {
     if (account) {
       const session = await account?.getSession("current");
       await account.deleteSession(session.$id);
+      setSession(null);
     }
   };
 
