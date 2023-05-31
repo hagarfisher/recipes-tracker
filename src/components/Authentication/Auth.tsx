@@ -1,5 +1,11 @@
 import styles from "./Auth.module.scss";
-import { Button, TextField, InputAdornment, Typography } from "@mui/material";
+import {
+  Button,
+  TextField,
+  InputAdornment,
+  Typography,
+  Alert,
+} from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
@@ -8,23 +14,39 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { ID, Models } from "appwrite";
 import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
+import Error from "next/error";
+import { ElevatorSharp } from "@mui/icons-material";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignIn, setIsSignIn] = useState(false);
+  const [error, setError] = useState("");
   const { setSession, account } = useContext(AppWriteClientContext);
+
+  useEffect(() => {
+    setError("");
+  }, [isSignIn]);
 
   if (!account) {
     return null;
   }
 
   const handleSubmit = async () => {
-    if (isSignIn) {
-      const session = await account.createEmailSession(email, password);
-      setSession(session);
-    } else {
-      const user = await account.create(ID.unique(), email, password);
+    try {
+      if (isSignIn) {
+        const session = await account.createEmailSession(email, password);
+        setSession(session);
+      } else {
+        // "user_already_exists
+        const user = await account.create(ID.unique(), email, password);
+      }
+    } catch (e: any) {
+      if (e.type === "user_already_exists") {
+        setError("Looks like you already have an account. Please log in.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -87,13 +109,15 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
           />
+          {error && (
+            <Alert className={styles[error]} severity="error">
+              {error}
+            </Alert>
+          )}
         </div>
+
         <div className={styles["auth-button"]}>
-          <Button
-            // className={styles["button"]}
-            variant="contained"
-            onClick={() => handleSubmit()}
-          >
+          <Button variant="contained" onClick={() => handleSubmit()}>
             {isSignIn ? "Log in" : "Sign up"}
             <ArrowForwardIcon className={styles.icon} fontSize="small" />
           </Button>

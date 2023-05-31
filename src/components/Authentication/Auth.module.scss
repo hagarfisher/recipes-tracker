@@ -37,7 +37,7 @@
       }
       display: flex;
       flex-direction: column;
-      gap: 3em;
+      gap: 2em;
     }
     .auth-button {
       button {
@@ -52,6 +52,7 @@
       display: flex;
       justify-content: flex-end;
     }
+
     .toggle-link {
       color: $primaryLightColor;
       font-weight: 500;
