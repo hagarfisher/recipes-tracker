@@ -5,8 +5,33 @@ export enum MealEditMode {
   UPDATE_EXISTING = "update",
 }
 
-export type Meal = Database["public"]["Tables"][ModelNames.MEALS]["Row"];
+export type Meal = {
+  name: string;
+  description: null;
+  imageUrl: string;
+  recipeUrl: string;
+  isDeleted: false;
+  createdBy: string;
+  tags: [];
+  $id: string;
+  $createdAt: string;
+  $updatedAt: string;
+  $permissions: string[];
+  $collectionId: string;
+  $databaseId: string;
+};
 
 export type MealEnrichedWithCookingEvents = Meal & {
-  cooking_events: { id: number; created_at: string }[];
+  cookingEvents: {
+    $collectionId: string;
+    $createdAt: string;
+    $databaseId: string;
+    $id: string;
+    $permissions: string[];
+    $updatedAt: string;
+    cookingDate: string;
+    createdBy: string;
+    isDeleted: boolean;
+    meal: string;
+  }[];
 };

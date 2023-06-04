@@ -1,27 +1,35 @@
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import { Button, Fade, TextField } from "@mui/material";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import React, { useState } from "react";
-import { CollectionNames, Database } from "../../utils/models";
+import React, { useState, useContext } from "react";
+import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
+
+import { Database, BucketNames } from "../../utils/models";
+import { Storage, ID } from "appwrite";
+
 import styles from "./Picture.module.scss";
 
 export default function Picture({
   unique_id: uid,
-  collectionName,
+  bucketName,
   onUpload,
   canEdit = false,
 }: {
   unique_id?: string;
 
-  collectionName: CollectionNames;
+  bucketName: BucketNames;
   onUpload?: (url: string) => void;
   canEdit?: boolean;
 }) {
-  const supabase = useSupabaseClient<Database>();
+  const { client } = useContext(AppWriteClientContext);
   const [pictureUrl, setPictureUrl] = useState<string>();
   const [isUploading, setIsUploading] = useState(false);
   const [isFromUrl, setIsFromUrl] = useState(false);
+
+  if (!client) {
+    return null;
+  }
+  const storage = new Storage(client);
 
   const urlInput = (
     <TextField
@@ -51,18 +59,13 @@ export default function Picture({
       const fileName = `${uid}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      let { error: uploadError } = await supabase.storage
-        .from(collectionName)
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-      const { data } = supabase.storage
-        .from(collectionName)
-        .getPublicUrl(filePath);
-
-      onUpload?.(data.publicUrl);
+      const createdFile = await storage.createFile(
+        bucketName,
+        ID.unique(),
+        file
+      );
+      const resourceUrl = storage.getFileView(bucketName, createdFile.$id);
+      onUpload?.(resourceUrl.toString());
     } catch (error) {
       console.error(error);
     } finally {

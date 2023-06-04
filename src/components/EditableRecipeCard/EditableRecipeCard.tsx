@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { MouseEventHandler } from "react";
-import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
-import { defaultImagePath } from "../../utils/constants";
-import { CollectionNames, Database, ModelNames } from "../../utils/models";
+import React, { useState, useContext } from "react";
+import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
+import { Client, Databases, ID, Models, Query } from "appwrite";
+
+import { defaultImagePath, databaseId } from "../../utils/constants";
+import {
+  BucketNames,
+  CollectionNames,
+  Database,
+  ModelNames,
+} from "../../utils/models";
 import { v4 as uuidv4 } from "uuid";
 
-import {
-  Meal,
-  Meal as MealType,
-  MealEnrichedWithCookingEvents,
-} from "../../types/meals";
+import { Meal, MealEnrichedWithCookingEvents } from "../../types/meals";
 import styles from "./EditableRecipeCard.module.scss";
 import {
   Button,
   Card,
   CardContent,
   CardMedia,
-  Typography,
-  Tooltip,
-  IconButton,
   TextField,
   Dialog,
   DialogTitle,
@@ -42,43 +41,58 @@ export default function EditableRecipeCard({
   handleClose,
   syncMealData,
 }: Props) {
+  const { client, session } = useContext(AppWriteClientContext);
+
   const [title, setTitle] = useState(mealData?.name ?? "");
   const [description, setDescription] = useState(mealData?.description ?? "");
-  const [recipeUrl, setRecipeUrl] = useState(mealData?.recipe_url ?? "");
+  const [recipeUrl, setRecipeUrl] = useState(mealData?.recipeUrl ?? "");
   const [mealImageUrl, setMealImageUrl] = useState(
-    mealData?.image_url ?? defaultImagePath
+    mealData?.imageUrl ?? defaultImagePath
   );
 
   const supabase = useSupabaseClient<Database>();
-  const user = useUser();
+  if (!client) {
+    return null;
+  }
+  const databases = new Databases(client);
 
-  // const { imageUrl, isLoading, error } = useResolveImageUrl(
-  //   CollectionNames.MEAL_IMAGES,
-  //   mealImageUrl ?? defaultImagePath
-  // );
+  if (!session) {
+    return null;
+  }
+  const userId = session.userId;
+
   async function updateOrCreateMeal(mealData: Partial<Meal>) {
     try {
-      const { data: freshMealDataFromServer, error } = await supabase
-        .from(ModelNames.MEALS)
-        .upsert({
-          ...{
-            id: mealData?.id,
+      let freshMealDataFromServer;
+      if (mealData?.$id) {
+        freshMealDataFromServer = await databases.updateDocument(
+          databaseId,
+          CollectionNames.MEALS,
+          mealData.$id,
+          {
             name: title,
             description: description,
-            recipe_url: recipeUrl,
-            image_url: mealImageUrl,
-          },
-          created_by: user!.id,
-          updated_at: new Date(),
-        })
-        .select(`*, ${ModelNames.COOKING_EVENTS} (id, created_at)`)
-        .single();
-      if (error) {
-        console.error(error);
+            recipeUrl: recipeUrl,
+            imageUrl: mealImageUrl,
+          }
+        );
       } else {
-        console.log("Meal updated!", freshMealDataFromServer);
-        syncMealData(freshMealDataFromServer as MealEnrichedWithCookingEvents);
+        freshMealDataFromServer = await databases.createDocument(
+          databaseId,
+          CollectionNames.MEALS,
+          ID.unique(),
+          {
+            name: title,
+            description: description,
+            recipeUrl: recipeUrl,
+            imageUrl: mealImageUrl,
+            createdBy: userId,
+          }
+        );
       }
+
+      console.log("Meal updated!", freshMealDataFromServer);
+      syncMealData(freshMealDataFromServer as MealEnrichedWithCookingEvents);
     } catch (error) {
       console.error(error);
     } finally {
@@ -118,7 +132,7 @@ export default function EditableRecipeCard({
                           setMealImageUrl(url);
                         }
                       }}
-                      collectionName={CollectionNames.MEAL_IMAGES}
+                      bucketName={BucketNames.MEAL_IMAGES}
                       canEdit={true}
                     />
                   </div>
