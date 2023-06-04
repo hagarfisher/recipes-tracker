@@ -64,9 +64,7 @@ const COLLECTIONS = {
       },
       {
         key: "imageUrl",
-        size: 20,
-        type: AttributeType.STRING,
-        default: "646e5e3753d0e8528902",
+        type: AttributeType.URL,
         required: false,
       },
       {
