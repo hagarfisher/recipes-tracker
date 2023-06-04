@@ -20,8 +20,6 @@ export default function App({
   let client = null;
   let account: Account | null = null;
   if (process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID) {
-    console.error("NEXT_PUBLIC_APPWRITE_PROJECT_ID is not set");
-    // TODO: return error screen
     client = new Client()
       .setEndpoint("https://cloud.appwrite.io/v1")
       .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
