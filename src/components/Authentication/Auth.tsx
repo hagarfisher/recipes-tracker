@@ -14,8 +14,6 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { ID, Models } from "appwrite";
 import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
-import Error from "next/error";
-import { ElevatorSharp } from "@mui/icons-material";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
