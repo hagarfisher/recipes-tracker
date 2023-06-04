@@ -2,6 +2,7 @@ import { useContext } from "react";
 import Auth from "../src/components/Authentication/Auth";
 import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
 import styles from "../styles/pages.module.scss";
+import Meals from "../src/screens/Meals/Meals";
 
 const Home = () => {
   const { session } = useContext(AppWriteClientContext);
@@ -13,8 +14,7 @@ const Home = () => {
           <Auth />
         </div>
       ) : (
-        // <Meals session={session} />
-        <div>signed in</div>
+        <Meals />
       )}
     </div>
   );
