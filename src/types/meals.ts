@@ -21,17 +21,18 @@ export type Meal = {
   $databaseId: string;
 };
 
+export type cookingEvent = {
+  $collectionId: string;
+  $createdAt: string;
+  $databaseId: string;
+  $id: string;
+  $permissions: string[];
+  $updatedAt: string;
+  cookingDate: string;
+  createdBy: string;
+  isDeleted: boolean;
+  meal: string;
+};
 export type MealEnrichedWithCookingEvents = Meal & {
-  cookingEvents: {
-    $collectionId: string;
-    $createdAt: string;
-    $databaseId: string;
-    $id: string;
-    $permissions: string[];
-    $updatedAt: string;
-    cookingDate: string;
-    createdBy: string;
-    isDeleted: boolean;
-    meal: string;
-  }[];
+  cookingEvents: cookingEvent[];
 };
