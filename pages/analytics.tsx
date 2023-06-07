@@ -8,11 +8,16 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Bar } from "react-chartjs-2";
-import { Database, ModelNames } from "../src/utils/models";
 import styles from "../styles/pages.module.scss";
 import { formatStringifiedTimestampToDate } from "../src/utils/date";
+import { databaseId } from "../src/utils/constants";
+import { CollectionNames } from "../src/utils/models";
+import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
+import { Databases, ID, Models, Query } from "appwrite";
+import { cookingEvent } from "../src/types/meals";
+import { CircularProgress } from "@mui/material";
 
 ChartJS.register(
   CategoryScale,
@@ -37,42 +42,22 @@ export const options = {
 };
 
 const Analytics = () => {
-  const session = useSession();
-  const supabase = useSupabaseClient<Database>();
-  const [rawData, setRawData] = useState<
-    ({
-      meal_id: any;
-    } & {
-      created_at: any;
-    })[]
-  >([]);
+  const { client, session } = useContext(AppWriteClientContext);
+  const [rawData, setRawData] = useState<cookingEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [labels, setLabels] = useState<string[]>([]);
   const [dataset, setDataset] = useState<number[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { error, data } = await supabase
-        .from(ModelNames.COOKING_EVENTS)
-        .select("meal_id, created_at")
-        .order("created_at", { ascending: true });
-      if (error) {
-        console.error(error);
-        setIsLoading(false);
-        return;
-      }
-      setRawData(data);
-      setIsLoading(false);
-    };
-
+    if (!client || !session) return;
     fetchData();
-  }, [supabase]);
+  }, [client, session]);
 
   useEffect(() => {
     const dataset = rawData.reduce<Record<string, number>>(
       (accumulator, value) => {
         const formattedDate: string = formatStringifiedTimestampToDate(
-          value.created_at
+          value.$createdAt
         );
         accumulator[formattedDate] = (accumulator[formattedDate] ?? 0) + 1;
         return accumulator;
@@ -82,6 +67,36 @@ const Analytics = () => {
     setDataset(Object.values(dataset));
     setLabels(Object.keys(dataset));
   }, [rawData]);
+
+  if (!client || !session) {
+    return null;
+  }
+
+  const databases = new Databases(client);
+  const userId = session?.userId;
+
+  async function fetchData() {
+    setIsLoading(true);
+    try {
+      const { total, documents } = await databases.listDocuments(
+        databaseId,
+        CollectionNames.COOKING_EVENTS,
+        [
+          Query.equal("createdBy", [userId]),
+          Query.orderAsc("cookingDate"),
+          Query.equal("isDeleted", [false]),
+        ]
+      );
+      console.log(documents);
+      if (documents) {
+        setRawData(documents as cookingEvent[]);
+      }
+      setIsLoading(false);
+    } catch (e) {
+      console.error(e);
+      setIsLoading(false);
+    }
+  }
 
   const data = {
     labels,
@@ -99,7 +114,9 @@ const Analytics = () => {
     session && (
       <div className={styles.container}>
         {isLoading ? (
-          <span>loading...</span>
+          <div className={styles.loader}>
+            <CircularProgress />
+          </div>
         ) : (
           <div className={styles["analytics-chart"]}>
             <Bar height={"90%"} options={options} data={data} />
