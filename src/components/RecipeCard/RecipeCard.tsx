@@ -1,5 +1,4 @@
 import { MouseEventHandler } from "react";
-import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
 import { defaultImagePath } from "../../utils/constants";
 import { CollectionNames, Database } from "../../utils/models";
 
@@ -16,7 +15,6 @@ import {
   Typography,
 } from "@mui/material";
 import MaterialLink from "@mui/material/Link";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { MealEnrichedWithCookingEvents } from "../../types/meals";
 import { isWithinLastDay } from "../../utils/date";
 import styles from "./RecipeCard.module.scss";
@@ -42,9 +40,6 @@ export default function RecipeCard({
   setMealImageUrl,
   handleDeleteMeal,
 }: Props) {
-  const supabase = useSupabaseClient<Database>();
-  const user = useUser();
-
   // TODO: somehow deal with tags, display them etc.
   const hasThisRecipeBeenCookedToday = mealData.cookingEvents?.find(
     (cookingEvent) => isWithinLastDay(new Date(cookingEvent.cookingDate))
