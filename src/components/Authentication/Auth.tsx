@@ -47,6 +47,14 @@ export default function SignUp() {
       }
     }
   };
+  const signInAsGuest = async () => {
+    try {
+      const session = await account.createAnonymousSession();
+      setSession(session);
+    } catch (e: any) {
+      setError("Something went wrong. Please try again.");
+    }
+  };
 
   const signUpText = (
     <div>
@@ -121,6 +129,14 @@ export default function SignUp() {
           </Button>
         </div>
         {isSignIn ? signUpText : signInText}
+        <Button
+          variant="outlined"
+          className={styles["guest-button"]}
+          onClick={() => signInAsGuest()}
+        >
+          or Continue as Guest{" "}
+          <ArrowForwardIcon className={styles.icon} fontSize="small" />
+        </Button>
       </div>
     </div>
   );
