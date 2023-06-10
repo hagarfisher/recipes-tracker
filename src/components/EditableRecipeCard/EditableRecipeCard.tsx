@@ -45,7 +45,7 @@ export default function EditableRecipeCard({
 
   const [title, setTitle] = useState(mealData?.name ?? "");
   const [description, setDescription] = useState(mealData?.description ?? "");
-  const [recipeUrl, setRecipeUrl] = useState(mealData?.recipeUrl ?? "");
+  const [recipeUrl, setRecipeUrl] = useState(mealData?.recipeUrl);
   const [mealImageUrl, setMealImageUrl] = useState(
     mealData?.imageUrl ?? defaultImagePath
   );
