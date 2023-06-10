@@ -11,14 +11,19 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import Typography from "@mui/material/Typography";
 import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import DrawerMenu from "./DrawerMenu";
+import { useRouter } from "next/router";
 const drawerWidth = 240;
 
 export default function Header() {
-  const { account, setSession } = useContext(AppWriteClientContext);
+  const router = useRouter();
+  const { client, session, account, setSession } = useContext(
+    AppWriteClientContext
+  );
 
   const { isMobile } = useDeviceDetect();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -28,6 +33,7 @@ export default function Header() {
       const session = await account?.getSession("current");
       await account.deleteSession(session.$id);
       setSession(null);
+      router.push("/");
     }
   };
 
@@ -44,7 +50,15 @@ export default function Header() {
 
   const signOutButton = (
     <IconButton color="inherit" onClick={() => handleLogout()}>
-      <LogoutOutlinedIcon />
+      <LogoutOutlinedIcon fontSize="medium" />
+    </IconButton>
+  );
+
+  const profileButton = (
+    <IconButton color="inherit">
+      <Link href="/profile">
+        <AccountCircleRoundedIcon fontSize="large" />
+      </Link>
     </IconButton>
   );
   const handleDrawerToggle = () => {
@@ -54,39 +68,44 @@ export default function Header() {
     <Box className={styles["header"]} sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
-          {isMobile ? (
-            <div className={styles["mobile-menu-container"]}>
-              <div className={styles["links-container"]}>
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="menu"
-                  onClick={handleDrawerToggle}
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon />
-                </IconButton>
+          {session ? (
+            isMobile ? (
+              <div className={styles["mobile-menu-container"]}>
+                <div className={styles["links-container"]}>
+                  <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    onClick={handleDrawerToggle}
+                    sx={{ mr: 2 }}
+                  >
+                    <MenuIcon />
+                  </IconButton>
 
+                  {linkToHome}
+                </div>
+
+                {signOutButton}
+              </div>
+            ) : (
+              <div className={styles["nav-links"]}>
                 {linkToHome}
+                <div>
+                  {navLinks.map((link, index) => {
+                    return (
+                      <Button color="inherit" key={link.path}>
+                        <Link href={link.path}>{link.name}</Link>
+                      </Button>
+                    );
+                  })}
+                  {profileButton}
+                  {signOutButton}
+                </div>
               </div>
-
-              {account && signOutButton}
-            </div>
+            )
           ) : (
-            <div className={styles["nav-links"]}>
-              {linkToHome}
-              <div>
-                {navLinks.map((link, index) => {
-                  return (
-                    <Button color="inherit" key={link.path}>
-                      <Link href={link.path}>{link.name}</Link>
-                    </Button>
-                  );
-                })}
-                {account && signOutButton}
-              </div>
-            </div>
+            linkToHome
           )}
         </Toolbar>
       </AppBar>
