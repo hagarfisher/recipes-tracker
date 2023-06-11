@@ -14,18 +14,24 @@
 }
 
 .auth-container {
-  background-image: url("../public/auth-screen-background-2.png");
-  background-size: 100%;
+  @media screen and (min-width: 1024px) {
+    background-size: 80%, 50%;
+  }
+  background-size: 100%, 70%;
 
-  background-repeat: no-repeat;
+  background-image: url("../public/auth-screen-background-2.png"),
+    url("../public/auth-page-background-1.png");
+  background-position: right bottom, left top;
+  background-repeat: no-repeat, no-repeat;
+
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100vw;
-  height: calc(100% - $headerHeight);
+  height: 100%;
 
   @media (orientation: portrait) {
-    background-image: url("../public/auth-screen-background-portrait.png");
+    height: 100%;
   }
 }
 
