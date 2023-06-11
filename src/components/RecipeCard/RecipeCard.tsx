@@ -1,5 +1,4 @@
 import { MouseEventHandler } from "react";
-import { useResolveImageUrl } from "../../hooks/useResolveImageUrl";
 import { defaultImagePath } from "../../utils/constants";
 import { CollectionNames, Database } from "../../utils/models";
 
@@ -16,7 +15,6 @@ import {
   Typography,
 } from "@mui/material";
 import MaterialLink from "@mui/material/Link";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { MealEnrichedWithCookingEvents } from "../../types/meals";
 import { isWithinLastDay } from "../../utils/date";
 import styles from "./RecipeCard.module.scss";
@@ -42,14 +40,11 @@ export default function RecipeCard({
   setMealImageUrl,
   handleDeleteMeal,
 }: Props) {
-  const supabase = useSupabaseClient<Database>();
-  const user = useUser();
-
   // TODO: somehow deal with tags, display them etc.
-  const hasThisRecipeBeenCookedToday = mealData.cooking_events?.find(
-    (cookingEvent) => isWithinLastDay(new Date(cookingEvent.created_at))
+  const hasThisRecipeBeenCookedToday = mealData.cookingEvents?.find(
+    (cookingEvent) => isWithinLastDay(new Date(cookingEvent.cookingDate))
   );
-
+  console.log(hasThisRecipeBeenCookedToday);
   return (
     <Card className={styles.card}>
       {
@@ -89,12 +84,14 @@ export default function RecipeCard({
           </div>
 
           <div className={styles["edit-overlay"]}>
-            <CardMedia
-              className={styles["card-media"]}
-              sx={{ height: 140 }}
-              image={mealData.image_url ?? defaultImagePath}
-              title="recipe-thumbnail"
-            />
+            <a href={mealData.recipeUrl ?? ""} target="_blank" rel="noreferrer">
+              <CardMedia
+                className={styles["card-media"]}
+                sx={{ height: 140 }}
+                image={mealData.imageUrl ?? defaultImagePath}
+                title="recipe-thumbnail"
+              ></CardMedia>
+            </a>
           </div>
         </>
       }
@@ -116,7 +113,7 @@ export default function RecipeCard({
           {mealData.description}
         </Typography>
 
-        <MaterialLink target={"_blank"} href={mealData.recipe_url ?? ""}>
+        <MaterialLink target={"_blank"} href={mealData.recipeUrl ?? ""}>
           Recipe
         </MaterialLink>
       </CardContent>

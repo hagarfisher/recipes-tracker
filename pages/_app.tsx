@@ -1,29 +1,52 @@
-import { useState } from "react";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
-import { AppProps } from "next/app";
-import "../styles/globals.scss";
-import Head from "next/head";
-import Header from "../src/components/Header/Header";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { appTheme } from "../src/themes/theme";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { Account, AppwriteException, Client, Models } from "appwrite";
+import { AppProps } from "next/app";
+import Head from "next/head";
+import { useEffect, useState } from "react";
+import Header from "../src/components/Header/Header";
+import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
+import { appTheme } from "../src/themes/theme";
+import "../styles/globals.scss";
 
 export default function App({
   Component,
   pageProps,
-}: AppProps<{
-  initialSession: Session;
-}>) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+}: AppProps<Record<string, unknown>>) {
+  const [session, setSession] = useState<Models.Session | null>(null);
+  let client = null;
+  let account: Account | null = null;
+  if (process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID) {
+    client = new Client()
+      .setEndpoint("https://cloud.appwrite.io/v1")
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
+    account = new Account(client);
+  }
+
+  useEffect(() => {
+    async function fetchUserSessionData() {
+      console.log(account);
+      if (!account || session) {
+        return;
+      }
+      try {
+        const session = await account.getSession("current");
+        setSession(session);
+      } catch (error) {
+        if (!(error instanceof AppwriteException)) {
+          console.error(error);
+        }
+      }
+    }
+    fetchUserSessionData();
+  }, [account, session]);
 
   return (
-    <SessionContextProvider
-      supabaseClient={supabase}
-      initialSession={pageProps.initialSession}
+    <AppWriteClientContext.Provider
+      value={{ account, client, session, setSession }}
     >
       <ThemeProvider theme={appTheme}>
         <CssBaseline enableColorScheme />
@@ -34,6 +57,6 @@ export default function App({
         <Header />
         <Component {...pageProps} />
       </ThemeProvider>
-    </SessionContextProvider>
+    </AppWriteClientContext.Provider>
   );
 }

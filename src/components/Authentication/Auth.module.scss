@@ -1,0 +1,68 @@
+@import "../../../styles/variables.module.scss";
+.container {
+  color: black;
+  display: flex;
+  flex-direction: column;
+
+  width: 40%;
+  @media only screen and (max-width: 400px) {
+    width: 80vw;
+  }
+  @media only screen and (min-width: 1024px) {
+    width: 35vw;
+  }
+  @media only screen and (min-width: 2000px) {
+    width: 25vw;
+    font-size: 1.4em;
+    button {
+      font-size: 0.8em;
+      height: 5vh;
+    }
+  }
+  h1 {
+    font-weight: 500;
+    margin-bottom: 1em;
+  }
+  .auth-container {
+    .form-fields {
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px $mainBackground inset !important;
+      }
+      input-field {
+        display: flex;
+        justify-content: center;
+      }
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+    }
+    .auth-button {
+      button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        .icon {
+          justify-self: flex-end;
+        }
+      }
+      margin: 2em 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .toggle-link {
+      color: $primaryLightColor;
+      font-weight: 500;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    .guest-button {
+      margin-top: 1em;
+    }
+  }
+}

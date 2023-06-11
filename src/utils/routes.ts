@@ -11,8 +11,8 @@ export const navLinks = [
     name: RouteNames.ANALYTICS,
     path: "/analytics",
   },
-  {
-    name: RouteNames.ADMIN,
-    path: "/admin",
-  },
+  // {
+  //   name: RouteNames.ADMIN,
+  //   path: "/admin",
+  // },
 ];

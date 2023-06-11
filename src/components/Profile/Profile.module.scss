@@ -1,0 +1,35 @@
+@import "../../../styles/variables.module.scss";
+
+.container {
+  .title {
+    padding: 1em;
+    font-size: 2em;
+    font-weight: 600;
+  }
+
+  .account-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    align-content: center;
+    .profile-details {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .profile-avatar {
+        font-size: 15vw;
+        color: $primaryDarkColor;
+      }
+      .profile-detail {
+        margin-left: 1em;
+        display: flex;
+        font-weight: 400;
+        flex-direction: column;
+        gap: 0.5em;
+      }
+    }
+
+    .group-details {
+    }
+  }
+}

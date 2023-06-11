@@ -7,14 +7,13 @@
   padding-right: 1vw;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  // grid-template-rows:
-  //   min-content 1fr min-content
-  //   100px 1fr max-content;
   column-gap: 2vw;
   row-gap: 2vh;
   background-color: $mainBackground;
-
-  .new-meal-btn {
-    // grid-area: sidebar;
-  }
+}
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
