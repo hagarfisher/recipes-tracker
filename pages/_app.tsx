@@ -28,7 +28,6 @@ export default function App({
 
   useEffect(() => {
     async function fetchUserSessionData() {
-      console.log(account);
       if (!account || session) {
         return;
       }

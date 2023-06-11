@@ -91,7 +91,6 @@ export default function EditableRecipeCard({
         );
       }
 
-      console.log("Meal updated!", freshMealDataFromServer);
       syncMealData(freshMealDataFromServer as MealEnrichedWithCookingEvents);
     } catch (error) {
       console.error(error);
@@ -127,7 +126,6 @@ export default function EditableRecipeCard({
                     <Picture
                       unique_id={uuidv4()}
                       onUpload={(url: string) => {
-                        console.log("this is from editable card ", url);
                         if (setMealImageUrl) {
                           setMealImageUrl(url);
                         }

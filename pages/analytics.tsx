@@ -16,7 +16,7 @@ import { databaseId } from "../src/utils/constants";
 import { CollectionNames } from "../src/utils/models";
 import { AppWriteClientContext } from "../src/contexts/AppWriteClientContext/AppWriteClientContext";
 import { Databases, ID, Models, Query } from "appwrite";
-import { cookingEvent } from "../src/types/meals";
+import { CookingEvent } from "../src/types/meals";
 import { CircularProgress } from "@mui/material";
 
 ChartJS.register(
@@ -43,7 +43,7 @@ export const options = {
 
 const Analytics = () => {
   const { client, session } = useContext(AppWriteClientContext);
-  const [rawData, setRawData] = useState<cookingEvent[]>([]);
+  const [rawData, setRawData] = useState<CookingEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [labels, setLabels] = useState<string[]>([]);
   const [dataset, setDataset] = useState<number[]>([]);
@@ -87,9 +87,8 @@ const Analytics = () => {
           Query.equal("isDeleted", [false]),
         ]
       );
-      console.log(documents);
       if (documents) {
-        setRawData(documents as cookingEvent[]);
+        setRawData(documents as CookingEvent[]);
       }
       setIsLoading(false);
     } catch (e) {

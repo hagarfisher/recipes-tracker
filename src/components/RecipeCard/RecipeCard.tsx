@@ -44,7 +44,6 @@ export default function RecipeCard({
   const hasThisRecipeBeenCookedToday = mealData.cookingEvents?.find(
     (cookingEvent) => isWithinLastDay(new Date(cookingEvent.cookingDate))
   );
-  console.log(hasThisRecipeBeenCookedToday);
   return (
     <Card className={styles.card}>
       {

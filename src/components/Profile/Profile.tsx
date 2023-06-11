@@ -12,7 +12,6 @@ export default function Profile() {
   useEffect(() => {
     const getAccount = async () => {
       const user = await account?.get();
-      console.log(user);
       if (user) {
         setUserDetails(user);
       }
