@@ -7,7 +7,7 @@ export enum MealEditMode {
 
 export type Meal = {
   name: string;
-  description: null;
+  description: string | null;
   imageUrl: string;
   recipeUrl: string;
   isDeleted: false;
@@ -21,7 +21,7 @@ export type Meal = {
   $databaseId: string;
 };
 
-export type cookingEvent = {
+export type CookingEvent = {
   $collectionId: string;
   $createdAt: string;
   $databaseId: string;
@@ -34,5 +34,5 @@ export type cookingEvent = {
   meal: string;
 };
 export type MealEnrichedWithCookingEvents = Meal & {
-  cookingEvents: cookingEvent[];
+  cookingEvents: CookingEvent[];
 };

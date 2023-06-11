@@ -4,10 +4,11 @@ import Button from "@mui/material/Button";
 import { useEffect, useState, useContext } from "react";
 import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
+import { sampleMeals } from "./sampleMeals";
 import {
   MealEditMode,
   MealEnrichedWithCookingEvents,
-  cookingEvent,
+  CookingEvent,
 } from "../../types/meals";
 import { databaseId } from "../../utils/constants";
 import { CollectionNames } from "../../utils/models";
@@ -56,12 +57,28 @@ export default function Meals() {
   async function getMeals() {
     try {
       setLoading(true);
-
-      const { total, documents } = await databases.listDocuments(
+      let { total = 0, documents = [] } = await databases.listDocuments(
         databaseId,
         CollectionNames.MEALS,
         [Query.equal("createdBy", [userId]), Query.equal("isDeleted", [false])]
       );
+
+      if (total === 0 && session?.provider === "anonymous") {
+        for (const meal of sampleMeals) {
+          documents.push(
+            await databases.createDocument(
+              databaseId,
+              CollectionNames.MEALS,
+              ID.unique(),
+              {
+                ...meal,
+                createdBy: userId,
+              }
+            )
+          );
+          total += 1;
+        }
+      }
 
       if (documents) {
         const cookingEvents = await databases.listDocuments(
@@ -79,7 +96,6 @@ export default function Meals() {
             cookingEvents: cookingEventsForThisMeal,
           };
         }) as MealEnrichedWithCookingEvents[];
-
         setMealsData(enrichedMeals);
       }
     } catch (error) {
@@ -115,7 +131,6 @@ export default function Meals() {
         CollectionNames.COOKING_EVENTS,
         [Query.equal("meal", [mealId])]
       );
-      console.log(cookingEventsToDelete);
       for (const cookingEvent of cookingEventsToDelete.documents) {
         await databases.updateDocument(
           databaseId,
@@ -127,7 +142,6 @@ export default function Meals() {
         );
       }
 
-      console.log("Meal deleted!");
       setMealsData((prevState) =>
         prevState.filter((item) => item.$id != mealId)
       );
@@ -140,7 +154,6 @@ export default function Meals() {
 
   async function updateCookingSession(mealId: string) {
     try {
-      console.log(mealId);
       const cookingEvent = await databases.createDocument(
         databaseId,
         CollectionNames.COOKING_EVENTS,
@@ -153,7 +166,6 @@ export default function Meals() {
       );
 
       await getMeals();
-      console.log("Cooking session created!");
     } catch (error) {
       console.error(error);
     }
