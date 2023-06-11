@@ -1,19 +1,15 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useEffect, useState, useContext } from "react";
+import { Databases, ID, Query } from "appwrite";
+import { useContext, useEffect, useState } from "react";
 import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
-import { sampleMeals } from "./sampleMeals";
-import {
-  MealEditMode,
-  MealEnrichedWithCookingEvents,
-  CookingEvent,
-} from "../../types/meals";
+import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
+import { MealEnrichedWithCookingEvents } from "../../types/meals";
 import { databaseId } from "../../utils/constants";
 import { CollectionNames } from "../../utils/models";
-import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
-import { Databases, ID, Models, Query } from "appwrite";
+import { sampleMeals } from "./sampleMeals";
 
 import styles from "./Meals.module.scss";
 
@@ -29,7 +25,29 @@ export default function Meals() {
   useEffect(() => {
     getMeals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.current]);
+  }, []);
+
+  useEffect(() => {
+    async function createSampleData() {
+      for (const meal of sampleMeals) {
+        await databases.createDocument(
+          databaseId,
+          CollectionNames.MEALS,
+          ID.unique(),
+          { ...meal, createdBy: session!.userId }
+        );
+      }
+    }
+    if (
+      loading === false &&
+      mealsData.length === 0 &&
+      session?.provider === "anonymous"
+    ) {
+      createSampleData();
+      getMeals();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mealsData]);
 
   if (!client) {
     return null;
@@ -62,23 +80,6 @@ export default function Meals() {
         CollectionNames.MEALS,
         [Query.equal("createdBy", [userId]), Query.equal("isDeleted", [false])]
       );
-
-      if (total === 0 && session?.provider === "anonymous") {
-        for (const meal of sampleMeals) {
-          documents.push(
-            await databases.createDocument(
-              databaseId,
-              CollectionNames.MEALS,
-              ID.unique(),
-              {
-                ...meal,
-                createdBy: userId,
-              }
-            )
-          );
-          total += 1;
-        }
-      }
 
       if (documents) {
         const cookingEvents = await databases.listDocuments(
