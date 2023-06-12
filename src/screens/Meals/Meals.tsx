@@ -43,11 +43,10 @@ export default function Meals() {
       mealsData.length === 0 &&
       session?.provider === "anonymous"
     ) {
-      createSampleData();
-      getMeals();
+      createSampleData().then(getMeals);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mealsData]);
+  }, [mealsData, loading]);
 
   if (!client) {
     return null;
