@@ -39,5 +39,5 @@ Then, start the development server:
 
 - Next.js
 - React
-- Supabase
+- Appwrite
 - Material UI
