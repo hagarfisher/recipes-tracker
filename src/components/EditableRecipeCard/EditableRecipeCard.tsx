@@ -1,6 +1,14 @@
 import React, { useState, useContext } from "react";
 import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
-import { Client, Databases, ID, Models, Query } from "appwrite";
+import {
+  Client,
+  Databases,
+  ID,
+  Models,
+  Query,
+  Permission,
+  Role,
+} from "appwrite";
 
 import { defaultImagePath, databaseId } from "../../utils/constants";
 import {
@@ -87,7 +95,12 @@ export default function EditableRecipeCard({
             recipeUrl: recipeUrl,
             imageUrl: mealImageUrl,
             createdBy: userId,
-          }
+          },
+          [
+            Permission.read(Role.user(userId)),
+            Permission.update(Role.user(userId)),
+            Permission.delete(Role.user(userId)),
+          ]
         );
       }
 

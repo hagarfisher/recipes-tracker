@@ -1,7 +1,7 @@
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
 import Button from "@mui/material/Button";
-import { Databases, ID, Query } from "appwrite";
+import { Databases, ID, Permission, Role, Query } from "appwrite";
 import { useContext, useEffect, useState } from "react";
 import EditableRecipeCard from "../../components/EditableRecipeCard/EditableRecipeCard";
 import RecipeCard from "../../components/RecipeCard/RecipeCard";
@@ -34,7 +34,12 @@ export default function Meals() {
           databaseId,
           CollectionNames.MEALS,
           ID.unique(),
-          { ...meal, createdBy: session!.userId }
+          { ...meal, createdBy: session!.userId },
+          [
+            Permission.read(Role.user(session!.userId)),
+            Permission.update(Role.user(session!.userId)),
+            Permission.delete(Role.user(session!.userId)),
+          ]
         );
       }
     }
@@ -77,7 +82,7 @@ export default function Meals() {
       let { total = 0, documents = [] } = await databases.listDocuments(
         databaseId,
         CollectionNames.MEALS,
-        [Query.equal("createdBy", [userId]), Query.equal("isDeleted", [false])]
+        [Query.equal("isDeleted", [false])]
       );
 
       if (documents) {
@@ -162,7 +167,12 @@ export default function Meals() {
           meal: mealId,
           createdBy: userId,
           cookingDate: new Date(),
-        }
+        },
+        [
+          Permission.read(Role.user(session!.userId)),
+          Permission.update(Role.user(session!.userId)),
+          Permission.delete(Role.user(session!.userId)),
+        ]
       );
 
       await getMeals();
