@@ -6,11 +6,11 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 import { ID, Models } from "appwrite";
 import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppWriteClientContext";
@@ -21,6 +21,28 @@ export default function SignUp() {
   const [isSignIn, setIsSignIn] = useState(false);
   const [error, setError] = useState("");
   const { setSession, account } = useContext(AppWriteClientContext);
+
+  const { asPath } = useRouter();
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
+
+  const passwordResetUrl = `${origin}${asPath}\password-reset`;
+
+  const resetPassword = async () => {
+    try {
+      if (account) {
+        if (!email || email === "") {
+          setError("Please enter your email.");
+          return;
+        }
+        await account.createRecovery(email, passwordResetUrl);
+      }
+    } catch (e: any) {
+      setError("Something went wrong. Please try again.");
+    }
+  };
 
   useEffect(() => {
     setError("");
@@ -87,6 +109,7 @@ export default function SignUp() {
         <div className={styles["form-fields"]}>
           <TextField
             id="email"
+            type="email"
             placeholder="Email"
             variant="standard"
             onChange={(e) => setEmail(e.target.value)}
@@ -111,10 +134,12 @@ export default function SignUp() {
                 </InputAdornment>
               ),
             }}
-            // autoComplete="current-password"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
           />
+          <div className={styles["forgot-password"]} onClick={resetPassword}>
+            <Typography fontSize={"0.8em"}>Forgot your password?</Typography>
+          </div>
           {error && (
             <Alert className={styles[error]} severity="error">
               {error}
