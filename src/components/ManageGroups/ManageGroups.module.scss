@@ -1,0 +1,55 @@
+@import "../../../styles/variables.module.scss";
+.container {
+  background-color: $mainBackground;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4em;
+  padding: 2em;
+  .groups-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    .group-details {
+      h3 {
+        margin-top: 3em;
+      }
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      .group-name {
+        font-weight: 600;
+      }
+      .group-members {
+        font-size: 0.8em;
+        // color: $primaryDarkColor;
+        .group-member {
+          display: flex;
+          align-items: center;
+          gap: 0.5em;
+          margin-bottom: 0.5em;
+
+          .group-member-avatar {
+            background-color: $primaryLightColor;
+          }
+        }
+      }
+    }
+    .my-groups {
+      .group {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+        margin: 1em;
+        background-color: rgb(255, 255, 255, 0.5);
+        padding: 0.4em;
+        border-radius: 0.5em;
+        justify-content: space-between;
+        width: 100%;
+        .group-avatar {
+          background-color: $primaryLightColor;
+        }
+      }
+    }
+  }
+}
