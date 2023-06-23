@@ -30,7 +30,7 @@ export default function ResetPassword({ userId, secret, expire }: Props) {
             confirmPassword
           );
           console.log("Password updated successfully");
-          router.push("/login");
+          router.push("/");
         }
       }
     } catch (e: any) {
