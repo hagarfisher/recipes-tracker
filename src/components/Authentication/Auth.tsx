@@ -5,7 +5,14 @@ import {
   InputAdornment,
   Typography,
   Alert,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -17,9 +24,11 @@ import { AppWriteClientContext } from "../../contexts/AppWriteClientContext/AppW
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignIn, setIsSignIn] = useState(false);
+  const [isSignIn, setIsSignIn] = useState(true);
   const [error, setError] = useState("");
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const { setSession, account } = useContext(AppWriteClientContext);
 
   const { asPath } = useRouter();
@@ -29,15 +38,16 @@ export default function SignUp() {
       : "";
 
   const passwordResetUrl = `${origin}${asPath}\password-reset`;
-
+  const handleResetDialogClose = () => setIsResetDialogOpen(false);
   const resetPassword = async () => {
     try {
       if (account) {
-        if (!email || email === "") {
+        if (!resetEmail || resetEmail === "") {
           setError("Please enter your email.");
           return;
         }
-        await account.createRecovery(email, passwordResetUrl);
+        await account.createRecovery(resetEmail, passwordResetUrl);
+        setIsResetDialogOpen(false);
       }
     } catch (e: any) {
       setError("Something went wrong. Please try again.");
@@ -137,8 +147,38 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
           />
-          <div className={styles["forgot-password"]} onClick={resetPassword}>
-            <Typography fontSize={"0.8em"}>Forgot your password?</Typography>
+          {isSignIn && (
+            <div
+              className={styles["forgot-password"]}
+              onClick={() => setIsResetDialogOpen(true)}
+            >
+              <Typography fontSize={"0.8em"}>Forgot your password?</Typography>
+            </div>
+          )}
+          <div>
+            <Dialog open={isResetDialogOpen} onClose={handleResetDialogClose}>
+              <DialogTitle>Reset Password</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  To reset your password please enter your email address here.
+                </DialogContentText>
+                <TextField
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  value={resetEmail}
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Email Address"
+                  type="email"
+                  fullWidth
+                  variant="standard"
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleResetDialogClose}>Cancel</Button>
+                <Button onClick={resetPassword}>Send a reset email</Button>
+              </DialogActions>
+            </Dialog>
           </div>
           {error && (
             <Alert className={styles[error]} severity="error">
