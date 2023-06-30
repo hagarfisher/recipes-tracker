@@ -17,7 +17,11 @@ const Home = () => {
       );
     }
     if (!session) {
-      return <Auth />;
+      return (
+        <div className={styles["auth-container"]}>
+          <Auth />
+        </div>
+      );
     }
     return <Meals />;
   };
