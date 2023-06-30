@@ -8,6 +8,7 @@ import {
   Query,
   Permission,
   Role,
+  Teams,
 } from "appwrite";
 
 import { defaultImagePath, databaseId } from "../../utils/constants";
@@ -58,11 +59,11 @@ export default function EditableRecipeCard({
     mealData?.imageUrl ?? defaultImagePath
   );
 
-  const supabase = useSupabaseClient<Database>();
   if (!client) {
     return null;
   }
   const databases = new Databases(client);
+  const teams = new Teams(client);
 
   if (!session) {
     return null;
@@ -85,6 +86,13 @@ export default function EditableRecipeCard({
           }
         );
       } else {
+        const teamsList = await teams.list();
+        const teamPermission = teamsList.teams.map((item) => [
+          Permission.read(Role.team(item.$id)),
+          Permission.update(Role.team(item.$id)),
+          Permission.delete(Role.team(item.$id)),
+        ]);
+
         freshMealDataFromServer = await databases.createDocument(
           databaseId,
           CollectionNames.MEALS,
@@ -98,6 +106,7 @@ export default function EditableRecipeCard({
           },
           [
             Permission.read(Role.user(userId)),
+            ...teamPermission.flat(),
             Permission.update(Role.user(userId)),
             Permission.delete(Role.user(userId)),
           ]
