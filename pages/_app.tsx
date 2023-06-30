@@ -17,6 +17,7 @@ export default function App({
   pageProps,
 }: AppProps<Record<string, unknown>>) {
   const [session, setSession] = useState<Models.Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   let client = null;
   let account: Account | null = null;
   if (process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID) {
@@ -29,6 +30,7 @@ export default function App({
   useEffect(() => {
     async function fetchUserSessionData() {
       if (!account || session) {
+        setIsLoading(false);
         return;
       }
       try {
@@ -38,6 +40,8 @@ export default function App({
         if (!(error instanceof AppwriteException)) {
           console.error(error);
         }
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchUserSessionData();
@@ -45,7 +49,7 @@ export default function App({
 
   return (
     <AppWriteClientContext.Provider
-      value={{ account, client, session, setSession }}
+      value={{ account, client, session, setSession, isLoading }}
     >
       <ThemeProvider theme={appTheme}>
         <CssBaseline enableColorScheme />

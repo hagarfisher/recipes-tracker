@@ -5,4 +5,11 @@ export const AppWriteClientContext = createContext<{
   client: Client | null;
   session: Models.Session | null;
   setSession: React.Dispatch<React.SetStateAction<Models.Session | null>>;
-}>({ account: null, client: null, session: null, setSession: () => {} });
+  isLoading: boolean;
+}>({
+  account: null,
+  client: null,
+  session: null,
+  setSession: () => {},
+  isLoading: true,
+});
