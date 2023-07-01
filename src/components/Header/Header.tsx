@@ -66,7 +66,7 @@ export default function Header() {
   };
   return (
     <Box className={styles["header"]} sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar className={styles["app-bar"]} position="static">
         <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
           {session ? (
             isMobile ? (

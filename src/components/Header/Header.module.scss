@@ -1,6 +1,9 @@
 @import "../../../styles/variables.module.scss";
 
 .header {
+  .app-bar {
+    height: $headerHeight;
+  }
   .nav-links {
     display: flex;
     justify-content: space-between;
